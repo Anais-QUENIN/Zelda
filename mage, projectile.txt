@@ -1,0 +1,181 @@
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Timer;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.objects.Shield;
+
+
+public class mage extends ennemies{
+	
+	public mage(Game game) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.orientation=orientation.SOUTH;
+        this.manager = new EnnemiesCollisionManager();
+        this.initResources();
+    }
+	
+	
+	private void initResources() {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = getGame().getImage("res/sprites/Ennemies/magegauche");
+        sprites[1] = getGame().getImage("res/sprites/Ennemies/magedroite");
+        sprites[2] = getGame().getImage("res/sprites/Ennemies/magedroite");
+        sprites[3] = getGame().getImage("res/sprites/Ennemies/magegauche");
+        sprites[4] = getGame().getImage("res/sprites/Ennemies/magehaut");
+        sprites[5] = getGame().getImage("res/sprites/Ennemies/magehaut");
+        sprites[6] = getGame().getImage("res/sprites/Ennemies/magegauche");
+        sprites[7] = getGame().getImage("res/sprites/Ennemies/magedroite");
+        this.setImages(sprites);
+        this.setLocation(256, 380);
+        this.setAnimationFrame(0, 0);
+    }
+	
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false);
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 22);
+                this.setAnimationFrame(0, 1);
+             
+            } else if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 22);
+                this.setAnimationFrame(0, 0);
+            }
+        }
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+    }
+
+	@Override
+	public void fight() {
+		
+		int indice=(int) (1 + (Math.random() * (8 - 1)));
+		Orientation [] dir= {Orientation.SOUTH, Orientation.NORTH, Orientation.WEST, Orientation.EAST, Orientation.NORTH_EAST, Orientation.NORTH_WEST, Orientation.SOUTH_EAST, Orientation.SOUTH_WEST};
+		Orientation or=dir[indice];
+		projmage projectile= new projmage(this.game, or, this.getX(),this.getY());
+		projectile.shoot(or);
+		}
+		
+	}
+
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.AnimatedSprite;
+import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Orientation;
+
+import zelda.objects.Shield;
+import zelda.scenary.Board;
+
+public class projmage extends AnimatedSprite {
+
+		protected static double SPEED = 0.4;  
+		    
+		protected static final int ANIMATION_DELAY = 100;  
+		    
+		protected static final int FIGHT_TIMER = 300;
+	    
+	    protected Timer figth;
+	    
+	    protected CollisionManager manager;
+	    
+	    protected final Orientation orientation;
+	    
+	    protected Game game;
+	    
+		
+		
+		
+	    public projmage(Game game, Orientation orientation, double x, double y) {
+	        this.game = game;
+	        this.orientation = orientation;
+	        this.getAnimationTimer().setDelay(projmage.ANIMATION_DELAY);
+	        this.manager = new ProjCollisionManager();
+	        this.initResources(x,y);
+	    }
+	    
+	    public Orientation getOrientation() {
+	    	return this.orientation;
+	    }
+	    
+	    private void initResources(double x, double y) {
+	        BufferedImage[] sprites = new BufferedImage[2];
+	        sprites[0] = game.getImage("res/sprites/Ennemies/projmage");
+	        sprites[1] = game.getImage("res/sprites/Ennemies/expmage");
+	        this.setImages(sprites);
+	        this.setLocation(x, y);
+	        this.setAnimationFrame(0, 0);
+	    }
+	    
+	    public void setBoard(Board board) {
+	        SpriteGroup proj = new SpriteGroup("PROJ SPRITE GROUPE");
+	        proj.add(this);
+	        this.manager.setCollisionGroup(proj, board.getForeground());
+	    }
+	    
+	    public void update(long elapsedTime) {
+	        super.update(elapsedTime);
+	        if (this.figth.action(elapsedTime)) {
+	            this.figth.setActive(false);
+	            if (this.orientation.equals(Orientation.WEST)) {
+	                this.setX(this.getX() + 22);
+	                if (this.shield.equals(Shield.Kind.SMALL)) {
+	                    this.setAnimationFrame(10, 10);
+	                } else {
+	                    this.setAnimationFrame(12, 12);
+	                }
+	            } else if (this.orientation.equals(Orientation.NORTH)) {
+	                this.setY(this.getY() + 22);
+	                this.setAnimationFrame(0, 0);
+	            }
+	        }
+	        if (this.manager != null) 
+	            this.manager.checkCollision();
+	    }
+
+	    
+	    public void render(Graphics2D g) {
+	        super.render(g);
+	    }
+
+	    
+	    public void shoot(Orientation direction) {
+	    	
+	    }
+	    
+	    
+	    private class ProjCollisionManager extends AdvanceCollisionGroup {
+	        public ProjCollisionManager() {
+	            this.pixelPerfectCollision = false;
+	        }
+	        
+	        public void collided(Sprite s1, Sprite s2) {
+	            
+	            this.revertPosition1();
+	            
+	        }
+	    }}
