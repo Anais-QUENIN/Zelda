@@ -1,0 +1,111 @@
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.AnimatedSprite;
+import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.objects.Shield;
+import zelda.scenary.Board;
+
+public abstract class ennemies extends AnimatedSprite{
+	
+	protected static double SPEED = 0.2;  
+	    
+	protected static final int ANIMATION_DELAY = 100;  
+	    
+	protected static final int FIGHT_TIMER = 300;
+	
+	protected int life;
+    
+    protected Timer figth;
+    
+    protected CollisionManager manager;
+    
+    protected Orientation orientation;
+    
+    protected Game game;
+    
+	
+	public void gauche() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(0, 1);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(-this.SPEED);
+            this.setVerticalSpeed(0);
+            this.orientation = Orientation.WEST;
+		}
+	}
+		
+	public void droite() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(2, 3);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(this.SPEED);
+            this.setVerticalSpeed(0);
+            this.orientation = Orientation.EAST;
+		}
+	}
+	
+	public void haut() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(4, 5);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(0);
+            this.setVerticalSpeed(this.SPEED);
+            this.orientation = Orientation.NORTH;
+		}
+	}
+	
+	public  void bas() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(6, 7);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(0);
+            this.setVerticalSpeed(-this.SPEED);
+            this.orientation = Orientation.SOUTH;
+		}
+	}
+	
+	public void render(Graphics2D g) {
+        super.render(g);
+    }
+
+	
+	public void setBoard(Board board) {
+        SpriteGroup ennemies = new SpriteGroup("ENNEMIES SPRITE GROUPE");
+        ennemies.add(this);
+        this.manager.setCollisionGroup(ennemies, board.getForeground());
+    }
+	
+	protected class EnnemiesCollisionManager extends AdvanceCollisionGroup {
+        public EnnemiesCollisionManager() {
+            this.pixelPerfectCollision = false;
+        }
+        
+        public void collided(Sprite s1, Sprite s2) {
+            
+     
+        
+            this.revertPosition1();
+        }
+    }
+	
+	public abstract void fight();
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
+}
