@@ -1,0 +1,9 @@
+Ennemis:
+Octorock M
+Mage M
+Crabe A
+Goblin M
+Flamme M
+Momie A
+Garde A (se deplace de haut en bas)
+Boss si on a le temps

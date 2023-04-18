@@ -1,0 +1,239 @@
+package zelda;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+
+import zelda.scenary.Quest;
+import zelda.scenary.Rock;
+
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.GameLoader;
+
+public class Zelda extends Game {
+    
+    private Link link;
+   
+    private Quest quest;
+    
+    private boolean menu;
+    
+    public Zelda() {
+        
+    }
+    private Rock rock;
+    
+    
+    public void initResources() {
+        this.quest = new Quest(this);
+        this.link = new Link(this);
+        this.link.setBoard(this.quest.getCurrentBoard());    
+        this.menu = false;
+    }
+    
+    public Boolean SortTableau() {
+    	if (this.link.getX()<0 || this.link.getX()>672 || this.link.getY()<126 || this.link.getY()>588) {
+    	return true;
+    	}else return false;
+    }
+        
+    public void update(long elapsedTime) {
+        if (this.keyPressed(KeyEvent.VK_ALT)) {
+            this.link.fight();
+        } else if (this.keyDown(KeyEvent.VK_LEFT)) {
+            this.link.walk(Orientation.WEST);
+        } else if (this.keyDown(KeyEvent.VK_RIGHT)) {
+            this.link.walk(Orientation.EAST);
+        } else if (this.keyDown(KeyEvent.VK_UP)) {
+            this.link.walk(Orientation.NORTH);
+        } else if (this.keyDown(KeyEvent.VK_DOWN)) {
+            this.link.walk(Orientation.SOUTH);
+        } else if (keyPressed(KeyEvent.VK_ESCAPE)) {
+            finish();
+        } else {
+            this.link.setSpeed(0, 0);
+        }
+        this.quest.update(elapsedTime);
+        this.link.update(elapsedTime);
+        if(this.SortTableau()) {
+        	
+        	System.out.println(quest.getX() + "," + quest.getY());
+        	System.out.println(link.getX() + "," + link.getY() + ": " + SortTableau());
+        	switch(this.link.getOrientation()) {
+        	case WEST:
+        		this.link.setLocation(671, this.link.getY());
+        		this.quest.changeBoard(this.quest.getX()-1, this.quest.getY());
+        		break;
+        	case EAST:
+        		this.link.setLocation(1, this.link.getY());
+        		this.quest.changeBoard(this.quest.getX()+1, this.quest.getY());
+        		break;
+        	case NORTH:
+        		this.link.setLocation(this.link.getX(),587);
+        		this.quest.changeBoard(this.quest.getX(), this.quest.getY()-1);
+        		break;
+        	case SOUTH:
+        		this.link.setLocation(this.link.getX(),137);
+        		this.quest.changeBoard(this.quest.getX(), this.quest.getY()+1);
+        		break;
+        	}
+        	this.link.setBoard(this.quest.getCurrentBoard());
+        }
+     
+    }
+
+    public void render(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        this.quest.render(g);
+        this.link.render(g);
+    }
+    
+    
+    public static void main(String[] args) {
+        GameLoader game = new GameLoader();
+        game.setup(new Zelda(), new Dimension(672,588), false);
+        game.start();
+    }
+    
+}
+
+package zelda.scenary;
+
+import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import zelda.Zelda;
+
+import com.golden.gamedev.object.PlayField;
+
+public class Quest extends PlayField {
+    
+    private Zelda game;
+    
+    private Board[][] boards;
+    
+    private QuestMenu menu;
+    
+    private Path[] chemins;
+    
+    private int x,y;
+    
+    public Quest(Zelda game) {
+        super();
+        this.game = game;
+        this.boards = new Board[3][3];
+        this.initRessources();
+    }
+
+    private void initRessources()  {
+      this.menu = new QuestMenu(this.game);
+        
+       
+     this.chemins= new Path[]{Paths.get("Haut_Gauche.txt"), Paths.get("Haut_Milieu.txt"), Paths.get("Haut_Droit.txt"), Paths.get("Milieu_Gauche.txt"), Paths.get("Milieu_Milieu.txt"), Paths.get("Milieu_Droit.txt"), Paths.get("Bas_Gauche.txt"), Paths.get("Bas_Milieu.txt"), Paths.get("Bas_Droit.txt")};
+        
+     for (int j=0; j<3; j++) {
+    	 for(int i=0; i<3; i++) {
+    	Path p1=chemins[j*3+i];
+    	Board board= new Board(this.game,i,j);
+
+		BufferedReader in = null;
+
+	 try {
+		 System.out.println(i+","+j+p1.toAbsolutePath());
+	 // Ouverture d'un flux en lecture depuis
+	 // le fichier désigné par le chemin f1
+	 in = Files.newBufferedReader(p1);
+	 
+
+	
+	 int c;
+	 // si le caractère lu est égale à -1 alors on a atteint
+	 // la fin du flux (i.e. la fin du fichier)
+	 // la méthode read retourne un entier borné entre 0 et 255(i.e. un octet)
+	 while ((c = in.read()) != -1) {
+		 System.out.print((char)c);
+		 switch(c) {
+		 	case 'x': board.add(new Rock(this.game, Rock.Kind.GREEN_PLAIN)); //rocher
+		 	break;
+		 	case '.': board.add(new Floor(this.game, Floor.Color.SAND)); //sol
+		 	break;
+		 	case '/': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_EAST_CORNER));//rocher sud est
+		 	break;
+		 	case '\\': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_WEST_CORNER));//rocher sud ouest
+		 	break;
+		 	case 'M': board.add(new Rock(this.game, Rock.Kind.GREEN_INDENTED));//rocher nord
+		 	break;
+		 }
+	 
+	 }
+	 }
+	 catch (Exception e) { // ancienne API : FileNotFoundException
+	 System.err.println("le fichier "+p1+" n'existe pas");
+	 e.printStackTrace();
+	 }
+	 // Les autres Exceptions de type IOException ne sont pas
+	 // gérées ici : la méthode main est déclarée throws IOException
+	 finally {
+	 if (in != null) {
+	 try {
+		in.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 }
+	
+	 }
+        
+        this.add(board);
+        }}
+     this.x=0;
+     this.y=0;
+        
+    }
+    
+    
+    public Board getCurrentBoard() {
+        return this.boards[x][y];
+    }
+    
+    public int getX() {
+    	return this.x;
+    }
+    
+    public int getY() {
+    	return this.y;
+    }
+    
+    public void changeBoard(int x, int y) {
+    	this.x=x;
+    	this.y=y;
+    }
+    
+    public void add(Board board) {
+        //this.addGroup(board.getBackground());
+        //this.addGroup(board.getForground());
+        this.boards[board.getX()][board.getY()] = board;
+    }
+        
+    public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        this.boards[x][y].update(elapsedTime);
+        this.menu.update(elapsedTime);
+    }
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+        this.boards[x][y].render(g);        
+        this.menu.render(g);
+    }
+}
