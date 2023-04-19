@@ -1,0 +1,111 @@
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Orientation;
+import zelda.Zelda;
+import zelda.enemies.ennemies.EnnemiesCollisionManager;
+import zelda.scenary.Board;
+
+public class Crabe extends ennemies {
+	
+	public Crabe(Zelda game) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+       // this.SPEED = 0.1; // lentement
+        this.orientation=Orientation.EAST;
+        this.manager = new EnnemiesCollisionManager();
+        this.life = 3; // admettons
+        this.initResources();
+    }
+	
+	private void initResources() {
+        BufferedImage[] sprites = new BufferedImage[2];
+        sprites[0] = getGame().getImage("res/sprites/Ennemies/Crab_1.png");
+        sprites[1] = getGame().getImage("res/sprites/Ennemies/Crab_2.png");
+     /*   sprites[2] = getGame().getImage("res/sprites/Ennemies/Crab_3");
+        sprites[3] = getGame().getImage("res/sprites/Ennemies/Crab_4");
+        sprites[4] = getGame().getImage("res/sprites/Ennemies/Crab_5");
+        sprites[5] = getGame().getImage("res/sprites/Ennemies/Crab_6");
+        sprites[6] = getGame().getImage("res/sprites/Ennemies/Crab_7");
+        sprites[7] = getGame().getImage("res/sprites/Ennemies/Crab_8"); */
+        this.setImages(sprites);
+        this.setLocation(300, 380); // mettre une autre location pas la meme que link..
+        this.setAnimationFrame(0, 0);
+    }
+	
+	public void setBoard(Board board) {
+        SpriteGroup crabe = new SpriteGroup("CRABE SPRITE GROUPE");
+        crabe.add(this);
+        this.manager.setCollisionGroup(crabe, board.getForeground());
+    }
+	
+	
+	
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+     //   if (this.figth.action(elapsedTime)) {
+      //      this.figth.setActive(false); 
+        
+         Orientation [] tabor = new Orientation[] {Orientation.EAST, Orientation.WEST};
+         int indice =  (int) (1 + (Math.random() * 2) - 1);
+ 		 this.orientation =tabor[indice];   
+         
+           
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 6);
+                this.setAnimationFrame(0, 0);
+             
+            } else if (this.orientation.equals(Orientation.EAST)) {
+                this.setX(this.getX() - 6);
+                this.setAnimationFrame(1, 1);
+            }
+            
+     //   }
+        
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+	
+
+	 public void render(Graphics2D g) {
+	        super.render(g);
+	       
+	    }
+	 
+/*	 private class CrabeCollisionManager extends AdvanceCollisionGroup {
+		 
+	        public CrabeCollisionManager() {
+	            this.pixelPerfectCollision = false;
+	        }
+	        
+	        @Override
+	    	public void collided(Sprite arg0, Sprite arg1) {
+	    		// TODO Auto-generated method stub
+	        	this.revertPosition1();
+	    	}
+	
+	*/
+	
+//	@Override
+	public void fight() {
+		// TODO Auto-generated method stub
+		// le garde n'a pas de méthode de combat, il fait des dégat à link on ayant une collision avec lui 
+		
+	} 
+	
+	// if il se fait toucher par link, il faut creer une methode updatevie
+	//qui met à jour les point de vie de l'ennemi. avec son attribut life.
+
+}
+	
+	
