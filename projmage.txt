@@ -1,0 +1,180 @@
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.AnimatedSprite;
+import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Link;
+import zelda.Orientation;
+
+import zelda.objects.Shield;
+import zelda.scenary.Board;
+
+public class projmage extends AnimatedSprite {
+
+		protected static double SPEED = 0.2;  
+		    
+		protected static final int ANIMATION_DELAY = 100;  
+		    
+		protected static final int FIGHT_TIMER = 300;
+	    
+	    protected Timer figth;
+	    
+	    protected CollisionManager manager;
+	    
+	    protected final Orientation orientation;
+	    
+	    protected Game game;
+	    
+		
+		
+		
+	    public projmage(Game game, Orientation orientation, double x, double y) {
+	        this.game = game;
+	        this.orientation = orientation;
+	        this.getAnimationTimer().setDelay(projmage.ANIMATION_DELAY);
+	        this.manager = new ProjCollisionManager();
+	        this.initResources(x,y);
+	    }
+	    
+	    public Orientation getOrientation() {
+	    	return this.orientation;
+	    }
+	    
+	    private class ProjCollisionManager extends AdvanceCollisionGroup {
+	        public ProjCollisionManager() {
+	            this.pixelPerfectCollision = false;
+	        }
+	        
+	        public void collided(Sprite s1, Sprite s2) {
+	            
+	        	 s1.setActive(false);
+	        }
+	            
+	    }
+	    
+	    private void initResources(double x, double y) {
+	        BufferedImage[] sprites = new BufferedImage[2];
+	        sprites[0] = game.getImage("res/sprites/Ennemies/projmage.png");
+	        sprites[1] = game.getImage("res/sprites/Ennemies/expmage.png");
+	        this.setImages(sprites);
+	        this.setLocation(x, y);
+	        this.setAnimationFrame(0, 0);
+	    }
+	    
+	    public void setBoard(Board board) {
+	        SpriteGroup proj = new SpriteGroup("PROJ SPRITE GROUPE");
+	        proj.add(this);
+	        this.manager.setCollisionGroup(proj, board.getForeground());
+	    }
+	    
+	    public void update(long elapsedTime) {
+	    	 super.update(elapsedTime);
+	    	    double dx = 0;
+	    	    double dy = 0;
+	    	    
+	    	    switch (this.orientation) {
+	    	        case NORTH:
+	    	            dy = -SPEED * elapsedTime;
+	    	            break;
+	    	        case SOUTH:
+	    	            dy = SPEED * elapsedTime;
+	    	            break;
+	    	        case EAST:
+	    	            dx = SPEED * elapsedTime;
+	    	            break;
+	    	        case WEST:
+	    	            dx = -SPEED * elapsedTime;
+	    	            break;
+	    	        case NORTH_EAST:
+	    	            dx = SPEED * elapsedTime;
+	    	            dy = -SPEED * elapsedTime;
+	    	            break;
+	    	        case NORTH_WEST:
+	    	            dx = -SPEED * elapsedTime;
+	    	            dy = -SPEED * elapsedTime;
+	    	            break;
+	    	        case SOUTH_EAST:
+	    	            dx = SPEED * elapsedTime;
+	    	            dy = SPEED * elapsedTime;
+	    	            break;
+	    	        case SOUTH_WEST:
+	    	            dx = -SPEED * elapsedTime;
+	    	            dy = SPEED * elapsedTime;
+	    	            break;
+	    	    }
+	    	    
+	    	    this.move(dx, dy);
+	    	    if (this.manager != null) 
+	                this.manager.checkCollision();
+	    	}
+
+	    
+	    public void render(Graphics2D g) {
+	        super.render(g);
+	    }
+
+	    
+	    public void shoot(Orientation direction) {
+	    	switch(direction) {
+	    	case NORTH: 
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	    		this.setVerticalSpeed(-projmage.SPEED);
+	    		this.setHorizontalSpeed(0);
+	    		break;
+	    	case SOUTH:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	            this.setVerticalSpeed(projmage.SPEED);
+	            this.setHorizontalSpeed(0);
+	            break;
+	    	case EAST:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	            this.setVerticalSpeed(0);
+	            this.setHorizontalSpeed(projmage.SPEED);
+	            break;
+	    	case WEST:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	            this.setVerticalSpeed(0);
+	            this.setHorizontalSpeed(-projmage.SPEED);
+	            break;
+	    	case NORTH_EAST:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	    		this.setVerticalSpeed(-projmage.SPEED);
+	            this.setHorizontalSpeed(projmage.SPEED);
+	            break;
+	    	case NORTH_WEST:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	    		this.setVerticalSpeed(-projmage.SPEED);
+	            this.setHorizontalSpeed(-projmage.SPEED);
+	            break;
+	    	case SOUTH_EAST:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	    		this.setVerticalSpeed(projmage.SPEED);
+	            this.setHorizontalSpeed(projmage.SPEED);
+	            break;
+	    	case SOUTH_WEST:
+	    		this.setAnimationFrame(0, 1);
+	    		this.setAnimate(true);
+	    		this.setVerticalSpeed(projmage.SPEED);
+	            this.setHorizontalSpeed(-projmage.SPEED);
+	            break;
+	    	}
+	    }
+	    
+	    
+	   
+	    
