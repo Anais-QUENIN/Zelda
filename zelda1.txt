@@ -1,0 +1,2146 @@
+package zelda.scenary;
+
+import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.util.List;
+
+import zelda.Zelda;
+import zelda.enemies.Crabe;
+import zelda.enemies.Ennemies;
+import zelda.enemies.Flamme;
+import zelda.enemies.Garde;
+import zelda.enemies.Goblin;
+import zelda.enemies.Mage;
+import zelda.enemies.Momie;
+import zelda.enemies.Octo;
+import zelda.objects.Bombe;
+import zelda.objects.Coeur;
+import zelda.objects.Emeraude;
+import zelda.objects.Objects;
+
+import com.golden.gamedev.object.PlayField;
+import com.golden.gamedev.object.Sprite;
+
+public class Quest extends PlayField {
+    
+    private Zelda game;
+    
+    private Board[][] boards;
+    
+    private List<Ennemies> [][] ennemies;
+    
+    private List<Objects> [][] objets;
+    
+    private QuestMenu menu;
+    
+    private Path[] chemins;
+    
+    private int x,y;
+    
+    public Quest(Zelda game) {
+        super();
+        this.game = game;
+        this.boards = new Board[3][3];
+        this.initRessources();
+        ennemies = new List[3][3];
+        objets=new List[3][3];
+        
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                ennemies[i][j] = new ArrayList<Ennemies>();
+                objets[i][j]= new ArrayList<Objects>();
+            }
+        }
+        ennemies[0][1].add(new Crabe(this.game,256 , 250));
+        ennemies[0][1].add(new Crabe(this.game,256 ,300));
+        ennemies[0][1].add(new Crabe(this.game,256 , 450));
+        ennemies[0][2].add(new Crabe(this.game,256 , 300));
+        ennemies[0][2].add(new Crabe(this.game,256 , 450));
+        ennemies[0][2].add(new Octo(this.game,120 , 320));
+        ennemies[0][2].add(new Octo(this.game,250 , 400));
+        ennemies[1][0].add(new Garde(this.game,400 , 400));
+        ennemies[1][0].add(new Garde(this.game,100 , 400));
+        ennemies[1][0].add(new Momie(this.game,256 , 380));
+        ennemies[1][1].add(new Goblin(this.game,256 , 380));
+        ennemies[1][1].add(new Garde(this.game,400 , 400));
+        ennemies[1][1].add(new Garde(this.game,100 , 400));
+        ennemies[1][1].add(new Goblin(this.game,256 , 250));
+        ennemies[1][2].add(new Mage(this.game,256 , 380));
+        ennemies[1][2].add(new Momie(this.game,400 , 400));
+        ennemies[1][2].add(new Crabe(this.game,256 , 250));
+        ennemies[1][2].add(new Mage(this.game,300 , 380));
+        ennemies[2][0].add(new Octo(this.game,256 , 380));
+        ennemies[2][0].add(new Momie(this.game,400 , 400));
+        ennemies[2][0].add(new Garde(this.game,256 , 250));
+        ennemies[2][0].add(new Flamme(this.game,300 , 380));
+        ennemies[2][1].add(new Mage(this.game,256 , 380));
+        ennemies[2][1].add(new Goblin(this.game,400 , 400));
+        ennemies[2][1].add(new Garde(this.game,256 , 250));
+        ennemies[2][1].add(new Goblin(this.game,300 , 380));
+        ennemies[2][2].add(new Mage(this.game,256 , 380));
+        ennemies[2][2].add(new Mage(this.game,400 , 400));
+        ennemies[2][2].add(new Garde(this.game,256 , 250));
+        ennemies[2][2].add(new Garde(this.game,300 , 380));
+        ennemies[2][2].add(new Flamme(this.game,300 , 450));
+        ennemies[2][2].add(new Flamme(this.game,450 , 400));
+        ennemies[2][2].add(new Flamme(this.game,300 , 250));
+        objets[0][1].add(new Emeraude(this.game,256 , 250));
+        objets[0][1].add(new Emeraude(this.game,256 ,300));
+        objets[0][1].add(new Emeraude(this.game,256 , 450));
+        objets[0][2].add(new Emeraude(this.game,256 , 300));
+        objets[0][2].add(new Emeraude(this.game,256 , 450));
+        objets[0][2].add(new Bombe(this.game,120 , 320));
+        objets[0][2].add(new Bombe(this.game,250 , 400));
+        objets[1][0].add(new Bombe(this.game,400 , 400));
+        objets[1][0].add(new Bombe(this.game,100 , 400));
+        objets[1][0].add(new Coeur(this.game,256 , 380));
+        objets[1][1].add(new Coeur(this.game,256 , 380));
+        objets[1][1].add(new Bombe(this.game,400 , 400));
+        objets[1][1].add(new Bombe(this.game,100 , 400));
+        objets[1][1].add(new Coeur(this.game,256 , 250));
+        objets[1][2].add(new Emeraude(this.game,256 , 380));
+        objets[1][2].add(new Coeur(this.game,400 , 400));
+        objets[1][2].add(new Emeraude(this.game,256 , 250));
+        objets[1][2].add(new Emeraude(this.game,300 , 380));
+        objets[2][0].add(new Bombe(this.game,256 , 380));
+        objets[2][0].add(new Coeur(this.game,400 , 400));
+        objets[2][0].add(new Bombe(this.game,256 , 250));
+        objets[2][0].add(new Emeraude(this.game,300 , 380));
+        objets[2][1].add(new Emeraude(this.game,256 , 380));
+        objets[2][1].add(new Coeur(this.game,400 , 400));
+        objets[2][1].add(new Bombe(this.game,256 , 250));
+        objets[2][1].add(new Coeur(this.game,300 , 380));
+        objets[2][2].add(new Emeraude(this.game,256 , 380));
+        objets[2][2].add(new Emeraude(this.game,400 , 400));
+        objets[2][2].add(new Bombe(this.game,256 , 250));
+        objets[2][2].add(new Bombe(this.game,300 , 380));
+        objets[2][2].add(new Emeraude(this.game,300 , 450));
+        objets[2][2].add(new Emeraude(this.game,450 , 400));
+        objets[2][2].add(new Emeraude(this.game,300 , 250));
+        for (int j=0; j<3; j++) {
+       	 for(int i=0; i<3; i++) {
+       		 for (int k=0; k<ennemies[i][j].size(); k++) {
+       			ennemies[i][j].get(k).setBoard(boards[i][j]);
+       			objets[i][j].get(k).setBoard(boards[i][j]);
+       			this.game.getLink().ennemies.add(ennemies[i][j].get(k));
+       			 
+       		 }
+       	 }
+       	 
+       	 }
+        }
+    
+
+    private void initRessources()  {
+      this.menu = new QuestMenu(this.game);
+        
+       
+     this.chemins= new Path[]{Paths.get("Haut_Gauche.txt"), Paths.get("Haut_Milieu.txt"), Paths.get("Haut_Droit.txt"), Paths.get("Milieu_Gauche.txt"), Paths.get("Milieu_Milieu.txt"), Paths.get("Milieu_Droit.txt"), Paths.get("Bas_Gauche.txt"), Paths.get("Bas_Milieu.txt"), Paths.get("Bas_Droit.txt")};
+        
+     for (int j=0; j<3; j++) {
+    	 for(int i=0; i<3; i++) {
+    	Path p1=chemins[j*3+i];
+    	Board board= new Board(this.game,i,j);
+
+		BufferedReader in = null;
+
+	 try {
+		 System.out.println(i+","+j+p1.toAbsolutePath());
+	 // Ouverture d'un flux en lecture depuis
+	 // le fichier désigné par le chemin f1
+	 in = Files.newBufferedReader(p1);
+	 
+
+	
+	 int c;
+	 // si le caractère lu est égale à -1 alors on a atteint
+	 // la fin du flux (i.e. la fin du fichier)
+	 // la méthode read retourne un entier borné entre 0 et 255(i.e. un octet)
+	 while ((c = in.read()) != -1) {
+		 System.out.print((char)c);
+		 switch(c) {
+		 	case 'x': board.add(new Rock(this.game, Rock.Kind.GREEN_PLAIN)); //rocher
+		 	break;
+		 	case '.': board.add(new Floor(this.game, Floor.Color.SAND)); //sol
+		 	break;
+		 	case '/': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_EAST_CORNER));//rocher sud est
+		 	break;
+		 	case '\\': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_WEST_CORNER));//rocher sud ouest
+		 	break;
+		 	case 'M': board.add(new Rock(this.game, Rock.Kind.GREEN_INDENTED));//rocher nord
+		 	break;
+		 }
+	 
+	 }
+	 }
+	 catch (Exception e) { // ancienne API : FileNotFoundException
+	 System.err.println("le fichier "+p1+" n'existe pas");
+	 e.printStackTrace();
+	 }
+	 // Les autres Exceptions de type IOException ne sont pas
+	 // gérées ici : la méthode main est déclarée throws IOException
+	 finally {
+	 if (in != null) {
+	 try {
+		in.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 }
+	
+	 }
+        
+        this.add(board);
+        }}
+     this.x=0;
+     this.y=0;
+        
+    }
+    
+    
+    public Board getCurrentBoard() {
+        return this.boards[x][y];
+    }
+    
+    public int getX() {
+    	return this.x;
+    }
+    
+    public int getY() {
+    	return this.y;
+    }
+    
+    public void changeBoard(int x, int y) {
+    	this.x=x;
+    	this.y=y;
+    }
+    
+    public void add(Board board) {
+        //this.addGroup(board.getBackground());
+        //this.addGroup(board.getForground());
+        this.boards[board.getX()][board.getY()] = board;
+    }
+        
+    public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        for (int j=0; j<3; j++) {
+          	 for(int i=0; i<3; i++) {
+          		 for (int k=0; k<this.ennemies[i][j].size(); k++) {
+          			if( this.ennemies[i][j].get(k).meurt()) {
+          				this.game.getLink().ennemies.remove(this.ennemies[i][j].get(k));
+          				this.game.getLink().objet.add(objets[i][j].get(k));
+          				objets[i][j].get(k).setVisibilite(true);
+          				this.ennemies[i][j].remove(k);
+          			}
+          		 
+          		 }
+          		for (int k=0; k<this.objets[i][j].size(); k++) {
+          			this.objets[i][j].get(k).update(elapsedTime);;
+          			if( this.objets[i][j].get(k).estRecup()) {
+          				this.game.getLink().objet.remove(this.objets[i][j].get(k));
+          				this.objets[i][j].remove(k);
+          			}
+          		}
+          	 }
+          	 
+          	 }
+        this.boards[x][y].update(elapsedTime);
+        this.menu.update(elapsedTime);
+    }
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+        this.boards[x][y].render(g); 
+        for (int i=0; i<this.objets[x][y].size(); i++) {
+        	if(this.objets[x][y].get(i).getVisibilite())
+        	this.objets[x][y].get(i).render(g);
+        }
+        for (int i=0; i<this.ennemies[x][y].size(); i++) {
+        	this.ennemies[x][y].get(i).render(g);
+        }
+        this.menu.render(g);
+    }
+}
+
+
+package zelda.objects;
+
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.object.AnimatedSprite;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+import zelda.Zelda;
+import zelda.scenary.Board;
+
+public abstract class Objects extends AnimatedSprite{
+	
+	protected SpriteGroup sprites;
+	
+	 protected Zelda game;
+	 
+	 protected boolean isImmune;
+		
+	 protected long immuneTimer; 
+	 
+	 protected boolean visibilite;
+	 protected Board board;
+	 protected boolean recup;
+	 
+	 public void setVisibilite(boolean bool) {
+		 if (!isImmune) {
+	            isImmune = true;
+	            immuneTimer = System.currentTimeMillis() + 1000; // l'immunité dure 3 secondes
+	        }
+		 this.visibilite=bool;
+	 }
+	 
+	 public void setRecup(boolean bool) {
+		 if(!isImmune) {
+			 this.recup=bool;
+		 }
+	 }
+	 
+	 public boolean estRecup() {
+		 
+		 return this.recup;
+	 }
+	 
+	 public boolean getVisibilite() {
+		 return this.visibilite;
+	 }
+	 
+	 public void render(Graphics2D g) {
+	        super.render(g);
+	    }
+	 
+	 public void setBoard(Board board) {
+			this.board=board;
+	    }
+	 
+	 
+	 public void update(long elapsedTime) {
+	        super.update(elapsedTime);
+	        if (isImmune && System.currentTimeMillis() > immuneTimer) {
+	            isImmune = false;
+	        }}
+	
+	 public static BufferedImage toBufferedImage(Image img)
+	    {
+	        if (img instanceof BufferedImage)
+	        {
+	            return (BufferedImage) img;
+	        }
+
+	        // Create a buffered image with transparency
+	        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	        // Draw the image on to the buffered image
+	        Graphics2D bGr = bimage.createGraphics();
+	        bGr.drawImage(img, 0, 0, null);
+	        bGr.dispose();
+
+	        // Return the buffered image
+	        return bimage;
+	    }
+
+}
+
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.AnimatedSprite;
+import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.objects.Shield;
+import zelda.scenary.Board;
+
+public abstract class Ennemies extends AnimatedSprite{
+
+	
+	protected static double SPEED = 0.2;  
+	    
+	protected static final int ANIMATION_DELAY = 100;  
+	    
+	protected static final int FIGHT_TIMER = 300;
+	
+	protected int life;
+    
+    protected Timer figth;
+    
+    protected int dommages=1;
+    
+    protected CollisionManager manager;
+    
+    protected CollisionManager ennemiesEnnemy;
+    
+    protected Orientation orientation;
+    
+    protected Game game;
+    
+    protected Board board;
+    
+    public Board getBoard() {
+    	return this.board;
+    }
+    
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+    
+    public Boolean SortTableau() {
+    	if (this.getX()<0 || this.getX()>672 || this.getY()<126 || this.getY()>588) {
+    	return true;
+    	}else return false;
+    }
+    
+    public Orientation getOrientation() {
+    	return this.orientation;
+    }
+    
+    public int Dommages(int dommages) {
+    	return life -= dommages;
+        
+    }
+    
+    public boolean meurt() {
+    	if(life<=0) {
+    		return true;
+    	}
+    	else return false;
+    }
+	
+    public int getDommages() {
+    	return this.dommages;
+    }
+    
+	public void gauche() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(0, 1);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(-this.SPEED);
+            this.setVerticalSpeed(0);
+            this.orientation = Orientation.WEST;
+		}
+	}
+		
+	public void droite() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(2, 3);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(this.SPEED);
+            this.setVerticalSpeed(0);
+            this.orientation = Orientation.EAST;
+		}
+	}
+	
+	public void bas() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(4, 5);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(0);
+            this.setVerticalSpeed(this.SPEED);
+            this.orientation = Orientation.SOUTH;
+		}
+	}
+	
+	public  void haut() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(6, 7);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(0);
+            this.setVerticalSpeed(-this.SPEED);
+            this.orientation = Orientation.NORTH;
+		}
+	}
+	
+	public void render(Graphics2D g) {
+        super.render(g);
+    }
+
+	
+	public void setBoard(Board board) {
+		this.board=board;
+        SpriteGroup ennemies = new SpriteGroup("ENNEMIES SPRITE GROUPE");
+        ennemies.add(this);
+        this.ennemiesEnnemy.setCollisionGroup(ennemies, ennemies);
+        this.manager.setCollisionGroup(ennemies, board.getForeground());
+    }
+	
+	protected class EnnemiesCollisionManager extends AdvanceCollisionGroup {
+        public EnnemiesCollisionManager() {
+            this.pixelPerfectCollision = false;
+        }
+        
+        public void collided(Sprite s1, Sprite s2) {
+            
+     
+        
+            this.revertPosition1();
+        }
+    }
+	
+	protected class EnnemiesEnnemyCollisionManager extends AdvanceCollisionGroup {
+        public EnnemiesEnnemyCollisionManager() {
+            this.pixelPerfectCollision = false;
+        }
+        
+        public void collided(Sprite s1, Sprite s2) {
+            
+     
+        
+            this.revertPosition1();
+        }
+    }
+	
+	public abstract void fight(Board board, Link link);
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
+}
+
+package zelda.objects;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+import zelda.Zelda;
+import zelda.enemies.Ennemies;
+import zelda.scenary.QuestMenu;
+
+public class Bombe extends Objects{
+	
+	public Bombe(Zelda game, double x, double y) {
+		this.game = game;
+		this.visibilite=false;
+		this.recup=false;
+		this.isImmune = false;
+        this.immuneTimer = 0;
+		BufferedImage[] sprites = new BufferedImage[1];
+        sprites[0] = Ennemies.toBufferedImage(this.game.getImage("res/sprites/Objects/OBO.GIF").getScaledInstance(25, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+	}
+
+}
+
+package zelda.objects;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+import zelda.Zelda;
+import zelda.enemies.Ennemies;
+import zelda.scenary.QuestMenu;
+
+public class Coeur extends Objects {
+
+	public Coeur(Zelda game, double x, double y) {
+		this.game = game;
+		this.visibilite=false;
+		this.recup=false;
+		this.isImmune = false;
+        this.immuneTimer = 0;
+		BufferedImage[] sprites = new BufferedImage[1];
+        sprites[0] = Ennemies.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+	}
+	
+}
+
+package zelda.objects;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+import zelda.Zelda;
+import zelda.enemies.Ennemies;
+import zelda.scenary.QuestMenu;
+
+public class Emeraude extends Objects{
+	
+	public Emeraude(Zelda game, double x, double y) {
+		this.game = game;
+		this.visibilite=false;
+		this.recup=false;
+		this.isImmune = false;
+        this.immuneTimer = 0;
+		BufferedImage[] sprites = new BufferedImage[1];
+        sprites[0] = Ennemies.toBufferedImage(this.game.getImage("res/sprites/objects/OYP.GIF").getScaledInstance(25, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+	}
+}
+
+package zelda.objects;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+import zelda.Zelda;
+import zelda.enemies.Ennemies;
+import zelda.scenary.QuestMenu;
+
+public class Triforce extends Objects{
+	
+	public Triforce(Zelda game, double x, double y) {
+		this.game = game;
+		this.visibilite=false;
+		this.recup=false;
+		this.isImmune = false;
+        this.immuneTimer = 0;
+		BufferedImage[] sprites = new BufferedImage[1];
+        sprites[0] = Ennemies.toBufferedImage(this.game.getImage("res/sprites/objects/OYTF.GIF").getScaledInstance(25, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+	}
+
+}
+
+
+package zelda;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import zelda.objects.Blade;
+import zelda.objects.Objects;
+import zelda.objects.Shield;
+import zelda.scenary.Board;
+
+
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.AnimatedSprite;
+import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+public class Link extends AnimatedSprite {
+	
+	private boolean isImmune;
+	
+    private long immuneTimer; 
+    
+    private static final double SPEED = 0.2;  
+    
+    private static final int ANIMATION_DELAY = 100;  
+    
+    private static final int FIGHT_TIMER = 300;
+    
+    public static final Shield.Kind DEFAULT_SHIELD = Shield.Kind.SMALL;
+    
+    public static final Orientation DEFAULT_ORIENTATION = Orientation.NORTH;
+    
+    private Game game;
+    
+    private Blade.Kind blade;
+    
+    private Shield.Kind shield;
+    
+    private Orientation orientation;
+    
+    private int life;
+    
+    private int bombe;
+    
+    private int emeraude;
+    
+    private int triforce;
+    
+    private Timer figth;
+    
+    public SpriteGroup ennemies;
+    
+    public SpriteGroup objet;
+    
+    private CollisionManager ennemy;
+    
+    private int dommages=1;
+    
+    private CollisionManager manager;
+    
+    private CollisionManager objets;
+    
+    public SpriteGroup link, playerGroup;
+    
+    private Board board;
+    
+    public Timer getFight() {
+    	return this.figth;
+    }
+    
+    public int getLife() {
+    	return this.life;
+    }
+    
+    public int getBombe() {
+    	return this.bombe;
+    }
+    
+    public int getTriforce() {
+    	return this.triforce;
+    }
+    
+    public int getEmeraude() {
+    	return this.emeraude;
+    }
+    
+    public Link(Game game) {
+        this.game = game;
+        this.shield = Link.DEFAULT_SHIELD;
+        this.orientation = Link.DEFAULT_ORIENTATION;
+        this.getAnimationTimer().setDelay(Link.ANIMATION_DELAY);
+        this.figth = new Timer(Link.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.life=16;
+        this.bombe=0;
+        this.triforce=0;
+        this.emeraude=0;
+        this.isImmune = false;
+        this.immuneTimer = 0;
+        this.manager = new LinkCollisionManager();
+        this.ennemies=new SpriteGroup("Link ennemies");
+        this.objet=new SpriteGroup("Link objets");
+        this.objets= new ObjetsCollisionManager();
+        this.ennemy=new PlayerEnnemiesCollisionManager();
+        
+        this.initResources();
+    }
+    
+    public Board getBoard() {
+    	return this.board;
+    }
+    
+    public int getDommages() {
+    	return this.dommages;
+    }
+    
+    public Orientation getOrientation() {
+    	return this.orientation;
+    }
+    
+    private void initResources() {
+        BufferedImage[] sprites = new BufferedImage[35];
+        // Walk north
+        sprites[0] = game.getImage("res/sprites/Link/GLWN1.gif");
+        sprites[1] = game.getImage("res/sprites/Link/GLWN2.gif");
+        // Walk south with small shield
+        sprites[2] = game.getImage("res/sprites/Link/GLSSWS1.gif");
+        sprites[3] = game.getImage("res/sprites/Link/GLSSWS2.gif");
+        // Walk south with magical shield
+        sprites[4] = game.getImage("res/sprites/Link/GLMSWS1.gif");
+        sprites[5] = game.getImage("res/sprites/Link/GLMSWS2.gif");
+        // Walk east with small shield
+        sprites[6] = game.getImage("res/sprites/Link/GLSSWE1.gif");
+        sprites[7] = game.getImage("res/sprites/Link/GLSSWE2.gif");
+        // Walk east with magical shield
+        sprites[8] = game.getImage("res/sprites/Link/GLMSWE1.gif");
+        sprites[9] = game.getImage("res/sprites/Link/GLMSWE2.gif");
+        // Walk west with small shield
+        sprites[10] = game.getImage("res/sprites/Link/GLSSWW1.gif");
+        sprites[11] = game.getImage("res/sprites/Link/GLSSWW2.gif");
+        // Walk west with magical shield
+        sprites[12] = game.getImage("res/sprites/Link/GLMSWW1.gif");
+        sprites[13] = game.getImage("res/sprites/Link/GLMSWW2.gif");
+        // Fight north with wood blade
+        sprites[14] = game.getImage("res/sprites/Link/GLFWBN1.gif");
+        sprites[15] = game.getImage("res/sprites/Link/GLFN1.gif");
+        sprites[16] = game.getImage("res/sprites/Link/GLFWBN.gif");
+        // Fight south with wood blade and small shield
+        sprites[17] = sprites[2];
+        sprites[18] = game.getImage("res/sprites/Link/GLFS.gif");
+        sprites[19] = game.getImage("res/sprites/Link/GLFWBS.gif");
+        // Fight south with wood blade and magical shield
+        sprites[20] = sprites[4];
+        sprites[21] = game.getImage("res/sprites/Link/GLFS.gif");
+        sprites[22] = game.getImage("res/sprites/Link/GLFWBS.gif");
+        // Fight east with wood blade and small shield
+        sprites[23] = sprites[6];
+        sprites[24] = game.getImage("res/sprites/Link/GLFE.gif");
+        sprites[25] = game.getImage("res/sprites/Link/GLFWBE.gif");
+        // Fight east with wood blade and magical shield
+        sprites[26] = sprites[8];
+        sprites[27] = game.getImage("res/sprites/Link/GLFE.gif");
+        sprites[28] = game.getImage("res/sprites/Link/GLFWBE.gif");
+        // Fight west with wood blade and small shield
+        sprites[29] = game.getImage("res/sprites/Link/GLFSSWBW.gif");
+        sprites[30] = game.getImage("res/sprites/Link/GLFW.gif");
+        sprites[31] = game.getImage("res/sprites/Link/GLFWBW.gif");
+        // Fight west with wood blade and magical shield
+        sprites[32] = game.getImage("res/sprites/Link/GLFMSWBW.gif");
+        sprites[33] = game.getImage("res/sprites/Link/GLFW.gif");
+        sprites[34] = game.getImage("res/sprites/Link/GLFWBW.gif");
+        
+        this.setImages(sprites);
+        this.setLocation(256, 380);
+        this.setAnimationFrame(0, 0);
+
+        
+    }
+    
+    public void setBoard(Board board) {
+    	this.board=board;
+        this.link = new SpriteGroup("LINK SPRITE GROUPE");
+        link.add(this);
+        this.playerGroup = new SpriteGroup("playerGroup");
+        playerGroup.add(this);
+        this.ennemy.setCollisionGroup(playerGroup,ennemies);
+        this.manager.setCollisionGroup(link, board.getForeground());
+        this.objets.setCollisionGroup(link, objet);
+    }
+    
+    public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false);
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 22);
+                if (this.shield.equals(Shield.Kind.SMALL)) {
+                    this.setAnimationFrame(10, 10);
+                } else {
+                    this.setAnimationFrame(12, 12);
+                }
+            } else if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 22);
+                this.setAnimationFrame(0, 0);
+            }
+        }
+        if (this.manager != null) 
+            this.manager.checkCollision();
+        if (this.ennemy != null) 
+            this.ennemy.checkCollision();
+        if (this.objets != null) 
+            this.objets.checkCollision();
+        
+        if (isImmune && System.currentTimeMillis() > immuneTimer) {
+            isImmune = false;
+        }
+    }
+
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+    }
+
+    
+    public void walk(Orientation direction) {
+        if (!this.figth.isActive()) { 
+            switch (direction) {
+            case NORTH:
+                this.setAnimationFrame(0, 1);
+                this.setAnimate(true);
+                this.setVerticalSpeed(-Link.SPEED);
+                this.setHorizontalSpeed(0);
+                this.orientation = Orientation.NORTH;
+                break;
+            case SOUTH:
+                switch(this.shield) {
+                case SMALL:
+                    this.setAnimationFrame(2, 3);
+                    break;
+                case MAGICAL:
+                    this.setAnimationFrame(4, 5);
+                    break;
+                default:
+                    // do nothing
+                }
+                this.setAnimate(true);
+                this.setVerticalSpeed(Link.SPEED);
+                this.setHorizontalSpeed(0);
+                this.orientation = Orientation.SOUTH;
+                break;
+            case EAST:
+                switch(this.shield) {
+                case SMALL:
+                    this.setAnimationFrame(6, 7);
+                    break;
+                case MAGICAL:
+                    this.setAnimationFrame(8, 9);
+                    break;
+                default:
+                    // do nothing
+                }
+                this.setAnimate(true);
+                this.setHorizontalSpeed(Link.SPEED);
+                this.setVerticalSpeed(0);
+                this.orientation = Orientation.EAST;
+                break;
+            case WEST:
+                switch(this.shield) {
+                case SMALL:
+                    this.setAnimationFrame(10, 11);
+                    break;
+                case MAGICAL:
+                    this.setAnimationFrame(12, 13);
+                    break;
+                default:
+                    // do nothing
+                }
+                this.setAnimate(true);
+                this.setHorizontalSpeed(-Link.SPEED);
+                this.setVerticalSpeed(0);
+                this.orientation = Orientation.WEST;
+                break;
+            default:
+                // do nothing
+            }
+        }
+    }
+    
+    public void fight() {
+        if (!this.figth.isActive()) { 
+            this.setSpeed(0, 0);
+            this.figth.setActive(true);
+            switch (this.orientation) {
+            case NORTH:
+                this.setY(this.getY() - 22);
+                this.setAnimationFrame(14, 16);
+                this.setAnimate(true);
+                break;
+            case SOUTH:
+                switch(this.shield) {
+                case SMALL:
+                    this.setAnimationFrame(17, 19);
+                    break;
+                case MAGICAL:
+                    this.setAnimationFrame(20, 22);
+                    break;
+                default:
+                    // do nothing
+                }
+                this.setAnimate(true);
+                break;
+            case EAST:
+                switch(this.shield) {
+                case SMALL:
+                    this.setAnimationFrame(23, 25);
+                    break;
+                case MAGICAL:
+                    this.setAnimationFrame(26, 28);
+                    break;
+                default:
+                    // do nothing
+                }
+                this.setAnimate(true);
+                break;
+            case WEST:
+                this.setX(this.getX() - 22);
+                switch(this.shield) {
+                case SMALL:
+                    this.setAnimationFrame(29, 31);
+                    break;
+                case MAGICAL:
+                    this.setAnimationFrame(32, 34);
+                    break;
+                default:
+                    // do nothing
+                }
+                this.setAnimate(true);
+                this.orientation = Orientation.WEST;
+                break;
+            default:
+                // do nothing
+            }
+        }
+    }
+    
+    public int Dommages(int dommages) {
+    	if (!isImmune) {
+            life -= dommages;
+            isImmune = true;
+            immuneTimer = System.currentTimeMillis() + 1000; // l'immunité dure 3 secondes
+        }
+    	return life;
+    }
+    
+    public boolean meurt() {
+    	if(life<=0) {
+    		return true;
+    	}
+    	else return false;
+    }
+    
+    private class LinkCollisionManager extends AdvanceCollisionGroup {
+        public LinkCollisionManager() {
+            this.pixelPerfectCollision = false;
+        }
+        
+        public void collided(Sprite s1, Sprite s2) {
+            
+     
+        
+            this.revertPosition1();
+        }
+    }
+
+    
+    private class ObjetsCollisionManager extends AdvanceCollisionGroup {
+        public ObjetsCollisionManager() {
+            this.pixelPerfectCollision = false;
+        }
+        
+        public void collided(Sprite s1, Sprite s2) {
+        	Link link= (Link)s1;
+        	if(s2 instanceof zelda.objects.Coeur) {
+        		zelda.objects.Coeur obj= (zelda.objects.Coeur)s2;
+        		link.life+=2;
+        		obj.setRecup(true);
+            }
+        	if(s2 instanceof zelda.objects.Bombe) {
+        		link.bombe+=1;
+        		((Objects) s2).setRecup(true);
+            }
+        	if(s2 instanceof zelda.objects.Emeraude) {
+        		link.emeraude+=1;
+        		((Objects) s2).setRecup(true);
+            	
+            }
+        	if(s2 instanceof zelda.objects.Triforce) {
+        		link.triforce+=1;
+        		((Objects) s2).setRecup(true);
+            	
+            }
+        }
+    }
+    
+    private class PlayerEnnemiesCollisionManager extends AdvanceCollisionGroup {
+        public PlayerEnnemiesCollisionManager() {
+            this.pixelPerfectCollision = false;
+        }
+        
+        public void collided(Sprite s1, Sprite s2) {
+        	Link link= (Link)s1;
+        	if(s2 instanceof zelda.enemies.Ennemies) {
+        		zelda.enemies.Ennemies ennemi= (zelda.enemies.Ennemies)s2;
+        		if(ennemi.getBoard()==link.getBoard()) {
+        			this.revertPosition1();
+                    this.revertPosition2();
+        			ennemi= (zelda.enemies.Ennemies)s2;
+                	if (((Link) link).getFight().isActive()) {
+                 	   switch(link.getOrientation()) {
+                    		case NORTH: if(link.getY()<ennemi.getY()) ennemi.Dommages(link.getDommages());
+                    		case SOUTH: if(link.getY()>ennemi.getY()) ennemi.Dommages(link.getDommages());
+                    		case EAST:  if(link.getX()<ennemi.getX()) ennemi.Dommages(link.getDommages());
+                    		case WEST: if(link.getX()>ennemi.getX()) ennemi.Dommages(link.getDommages());
+                    }
+                    }else{
+                	link.Dommages(ennemi.getDommages());
+                	if (ennemi.getOldX()!=ennemi.getX() || ennemi.getOldY()!=ennemi.getY()) {
+                	switch(ennemi.getOrientation()) {
+                	case NORTH: ennemi.setY(ennemi.getY() + 50);
+                	case SOUTH: ennemi.setY(ennemi.getY() - 50);
+                	case EAST: ennemi.setX(ennemi.getX() - 50);
+                	case WEST: ennemi.setX(ennemi.getX() + 50);
+                	}
+        	}
+            
+            	
+            	}
+                }
+            }
+            
+            if(s2 instanceof zelda.enemies.Projsimple) {
+            	zelda.enemies.Projsimple ennemi= (zelda.enemies.Projsimple)s2;
+            	if(ennemi.getBoard()==link.getBoard()) {
+            		this.revertPosition1();
+                    this.revertPosition2();
+                    link.Dommages(ennemi.getDommages());
+                    ennemi.alive=false;
+            	}
+            }
+            
+            if(s2 instanceof zelda.enemies.Projmage) {
+            	zelda.enemies.Projmage ennemi= (zelda.enemies.Projmage)s2;
+            	if(ennemi.getBoard()==link.getBoard()) {
+            		this.revertPosition1();
+                    this.revertPosition2();
+            		link.Dommages(ennemi.getDommages());
+                	ennemi.alive=false;
+            	}
+            	
+            }
+            
+           
+        }
+    }
+	
+}
+    
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.Zelda;
+import zelda.enemies.Ennemies.EnnemiesCollisionManager;
+import zelda.scenary.Board;
+
+public class Crabe extends Ennemies {
+
+	public Crabe(Zelda game, double x, double y) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+       // this.SPEED = 0.1; // lentement
+        this.orientation=Orientation.EAST;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.life = 3; // admettons
+        this.initResources(x,y);
+    }
+
+	private void initResources(double x, double y) {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = getGame().getImage("res/sprites/Ennemies/Crab_1.png");
+        sprites[1] = getGame().getImage("res/sprites/Ennemies/Crab_2.png");
+        sprites[2] = getGame().getImage("res/sprites/Ennemies/Crab_3.png");
+        sprites[3] = getGame().getImage("res/sprites/Ennemies/Crab_4.png");
+        sprites[4] = getGame().getImage("res/sprites/Ennemies/Crab_5.png");
+        sprites[5] = getGame().getImage("res/sprites/Ennemies/Crab_6.png");
+        sprites[6] = getGame().getImage("res/sprites/Ennemies/Crab_7.png");
+        sprites[7] = getGame().getImage("res/sprites/Ennemies/Crab_8.png");
+        this.setImages(sprites);
+        this.setLocation(x, y); // mettre une autre location pas la meme que link..
+        this.setAnimationFrame(0, 0);
+    }
+
+
+
+
+
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+           this.figth.setActive(false); 
+
+         Orientation [] tabor = new Orientation[] {Orientation.EAST, Orientation.WEST};
+         int indice =  (int) (1 + (Math.random() * 2) - 1);
+ 		 this.orientation =tabor[indice];   
+
+
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 6);
+                this.setAnimationFrame(0, 0);
+
+            } else if (this.orientation.equals(Orientation.EAST)) {
+                this.setX(this.getX() - 6);
+                this.setAnimationFrame(1, 1);
+            }
+
+       }
+        
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+
+
+	 public void render(Graphics2D g) {
+	        super.render(g);
+
+	    }
+
+
+	@Override
+	public void fight(Board board,Link link) {
+		// TODO Auto-generated method stub
+		System.out.println("fight");
+	}
+
+}
+package zelda.enemies;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Timer;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.enemies.Ennemies.EnnemiesCollisionManager;
+import zelda.enemies.Ennemies.EnnemiesEnnemyCollisionManager;
+import zelda.scenary.Board;
+
+public class Flamme extends Ennemies{
+	
+	public Flamme(Game game,double x, double y) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.orientation=orientation.SOUTH;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.life=1;
+        this.initResources(x,y);
+    }
+	
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+           this.figth.setActive(false); 
+
+         Orientation [] tabor = new Orientation[] {Orientation.EAST, Orientation.WEST};
+         int indice =  (int) (1 + (Math.random() * 2) - 1);
+ 		 this.orientation =tabor[indice];   
+
+
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 6);
+                this.setAnimationFrame(0, 0);
+
+            } else if (this.orientation.equals(Orientation.EAST)) {
+                this.setX(this.getX() - 6);
+                this.setAnimationFrame(1, 1);
+            }
+
+       }
+        
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+	
+	
+	private void initResources(double x, double y) {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme1.png").getScaledInstance(25, 25, 15));
+        sprites[1] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme2.png").getScaledInstance(25, 25, 15));
+        sprites[2] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme1.png").getScaledInstance(25, 25, 15));
+        sprites[3] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme2.png").getScaledInstance(25, 25, 15));
+        sprites[4] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme1.png").getScaledInstance(25, 25, 15));
+        sprites[5] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme2.png").getScaledInstance(25, 25, 15));
+        sprites[6] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme1.png").getScaledInstance(25, 25, 15));
+        sprites[7] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/flamme2.png").getScaledInstance(25, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+    }
+
+	@Override
+	public void fight(Board board, Link link) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void bas_droite() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(4, 5);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(this.SPEED);
+            this.setVerticalSpeed(this.SPEED);
+            this.orientation = Orientation.SOUTH_EAST;
+		}
+	}
+	
+	public void bas_gauche() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(4, 5);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(-this.SPEED);
+            this.setVerticalSpeed(this.SPEED);
+            this.orientation = Orientation.SOUTH_WEST;
+		}
+	}
+	
+	public void haut_droite() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(4, 5);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(this.SPEED);
+            this.setVerticalSpeed(-this.SPEED);
+            this.orientation = Orientation.NORTH_EAST;
+		}
+	}
+	
+	public void haut_gauche() {
+		if (!this.figth.isActive()) {
+			this.setAnimationFrame(4, 5);
+			this.setAnimate(true);
+            this.setHorizontalSpeed(-this.SPEED);
+            this.setVerticalSpeed(-this.SPEED);
+            this.orientation = Orientation.NORTH_WEST;
+		}
+	}
+
+}
+
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.Zelda;
+import zelda.enemies.Ennemies.EnnemiesCollisionManager;
+import zelda.enemies.Ennemies.EnnemiesEnnemyCollisionManager;
+import zelda.scenary.Board;
+
+public class Garde extends Ennemies {
+	
+	public Garde(Zelda game, double x, double y) {
+        this.setGame(game);
+       this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+       this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.SPEED = 0.1; // lentement
+        this.orientation=Orientation.SOUTH;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.life = 5; // admettons
+        this.initResources(x,y);
+    }
+	
+	public Orientation getOrientation() {
+    	return this.orientation;
+    }
+	
+	
+
+	private void initResources(double x, double y) {
+		BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardebas1.png").getScaledInstance(35, 25, 15));
+        sprites[1] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardebas2.png").getScaledInstance(35, 25, 15));
+        sprites[2] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardehaut1.png").getScaledInstance(35, 25, 15));
+        sprites[3] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardehaut2.png").getScaledInstance(35, 25, 15));
+        sprites[4] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardebas1.png").getScaledInstance(35, 25, 15));
+        sprites[5] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardebas2.png").getScaledInstance(35, 25, 15));
+        sprites[6] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardehaut1.png").getScaledInstance(35, 25, 15));
+        sprites[7] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/gardehaut2.png").getScaledInstance(35, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+    }
+
+	
+	
+	
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false); 
+        
+     /*    Orientation [] tabor = new Orientation[] {Orientation.NORTH, Orientation.SOUTH};
+         int indice =  (int) (1 + (Math.random() * 2) - 1);
+ 		 this.orientation =tabor[indice];  */
+         
+           
+            if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 15);
+                this.setAnimationFrame(0, 1);
+             
+            } else if (this.orientation.equals(Orientation.SOUTH)) {
+                this.setY(this.getY() - 15);
+                this.setAnimationFrame(1, 0);
+            }
+        }
+        
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+	
+
+	 public void render(Graphics2D g) {
+	        super.render(g);
+	       
+	    }
+
+	
+	
+	
+
+
+
+	 
+
+	public void fight(Board board, Link link) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	// if il se fait toucher par link, il faut creer une methode updatevie
+	//qui met à jour les point de vie de l'ennemi. avec son attribut life.
+
+}
+package zelda.enemies;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Timer;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.enemies.Ennemies.EnnemiesCollisionManager;
+import zelda.enemies.Ennemies.EnnemiesEnnemyCollisionManager;
+import zelda.scenary.Board;
+import zelda.scenary.Quest;
+
+public class Goblin extends Ennemies{
+	
+	protected Projgobl projectile;
+	
+	public Projgobl getProj() {
+		return this.projectile;
+	}
+
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false);
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 22);
+                this.setAnimationFrame(0, 1);
+             
+            } else if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 22);
+                this.setAnimationFrame(0, 0);
+            }
+        }
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+        
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+	
+	public Goblin(Game game, double x, double y) {
+        this.setGame(game);
+        this.life=4;
+        this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.orientation=orientation.SOUTH;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.initResources(x,y);
+    }
+	
+	
+	
+	
+	private void initResources(double x, double y) {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblingauche1.png").getScaledInstance(35, 25, 15));
+        sprites[1] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblingauche2.png").getScaledInstance(35, 25, 15));
+        sprites[2] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblindroite1.png").getScaledInstance(35, 25, 15));
+        sprites[3] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblindroite2.png").getScaledInstance(35, 25, 15));
+        sprites[4] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblinbas1.png").getScaledInstance(35, 25, 15));
+        sprites[5] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblinbas2.png").getScaledInstance(35, 25, 15));
+        sprites[6] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblinhaut1.png").getScaledInstance(35, 25, 15));
+        sprites[7] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/goblinhaut2.png").getScaledInstance(35, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x,y);
+        this.setAnimationFrame(0, 0);
+    }
+
+	@Override
+	public void fight(Board board, Link link) {
+		this.projectile= new Projgobl(this.game, this.orientation, this.getX(),this.getY());
+		projectile.setBoard(board);
+		link.ennemies.add(projectile);
+		projectile.shoot(this.orientation);
+		
+		
+	}
+
+}
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Timer;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.enemies.Ennemies.EnnemiesEnnemyCollisionManager;
+import zelda.objects.Shield;
+import zelda.scenary.Board;
+import zelda.scenary.Quest;
+
+
+public class Mage extends Ennemies{
+
+	
+	protected Projmage projectile;
+	
+	public Projmage getProj() {
+		return this.projectile;
+	}
+	
+	public Mage(Game game, double x, double y) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.life=3;
+        this.orientation=orientation.SOUTH;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.initResources(x,y);
+    }
+	
+	
+	private void initResources(double x, double y) {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magegauche.png").getScaledInstance(35, 25, 15));
+        sprites[1] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magedroite.png").getScaledInstance(35, 25, 15));
+        sprites[2] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magedroite.png").getScaledInstance(35, 25, 15));
+        sprites[3] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magegauche.png").getScaledInstance(35, 25, 15));
+        sprites[4] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magehaut.png").getScaledInstance(35, 25, 15));
+        sprites[5] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magehaut.png").getScaledInstance(35, 25, 15));
+        sprites[6] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magegauche.png").getScaledInstance(35, 25, 15));
+        sprites[7] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/magedroite.png").getScaledInstance(35, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(0, 0);
+    }
+	
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false);
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 22);
+                this.setAnimationFrame(0, 1);
+             
+            } else if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 22);
+                this.setAnimationFrame(0, 0);
+            }
+        }
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+        
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+    }
+
+	@Override
+	public void fight(Board board, Link link) {
+		
+		int indice=(int) (1 + (Math.random() * (8 - 1)));
+		Orientation [] dir= {Orientation.SOUTH, Orientation.NORTH, Orientation.WEST, Orientation.EAST, Orientation.NORTH_EAST, Orientation.NORTH_WEST, Orientation.SOUTH_EAST, Orientation.SOUTH_WEST};
+		Orientation or=dir[indice];
+		this.projectile= new Projmage(this.game, or, this.getX(),this.getY());
+		this.projectile.setBoard(board);
+		link.ennemies.add(projectile);
+		projectile.shoot(or);
+
+		}
+		
+	}
+
+
+package zelda.enemies;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.Timer;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.Zelda;
+import zelda.enemies.Ennemies.EnnemiesCollisionManager;
+import zelda.enemies.Ennemies.EnnemiesEnnemyCollisionManager;
+import zelda.scenary.Board;
+import zelda.scenary.Quest;
+
+public class Momie extends Ennemies {
+
+	private Quest quest;
+
+	protected Projectile_Momie projectile;
+
+	public Momie(Zelda game, double x, double y) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.SPEED = 0.1; // lentement
+        this.orientation=Orientation.SOUTH;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.life = 4; // admettons
+        this.initResources(x,y);
+    }
+
+	public Orientation getOrientation() {
+    	return this.orientation;
+    }
+
+	public Projectile_Momie getProj() {
+		return projectile;
+	}
+
+
+
+	private void initResources(double x, double y) {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_d.png").getScaledInstance(35, 25, 15));
+        sprites[1] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_g.png").getScaledInstance(35, 25, 15));
+        sprites[2] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_d.png").getScaledInstance(35, 25, 15));
+        sprites[3] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_g.png").getScaledInstance(35, 25, 15));
+        sprites[4] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_d.png").getScaledInstance(35, 25, 15));
+        sprites[5] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_g.png").getScaledInstance(35, 25, 15));
+        sprites[6] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_d.png").getScaledInstance(35, 25, 15));
+        sprites[7] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/momie_g.png").getScaledInstance(35, 25, 15));
+        this.setImages(sprites);
+        this.setLocation(x, y); // mettre une autre location, pas la même que link..
+        this.setAnimationFrame(0, 0);
+    }
+
+/*	public void setBoard(Board board) {
+        SpriteGroup garde = new SpriteGroup("GARDE SPRITE GROUPE");
+        garde.add(this);
+        this.manager.setCollisionGroup(garde, board.getForeground());
+    } */
+
+
+
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false); 
+
+    /*     Orientation [] tabor = new Orientation[] {Orientation.WEST, Orientation.NORTH};
+         int indice =  (int) (1 + (Math.random() * 2) - 1);
+ 		 this.orientation =tabor[indice];  */
+
+
+            if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 15);
+                this.setAnimationFrame(0, 1);
+
+            }
+        /*    } else if (this.orientation.equals(Orientation.SOUTH)) {
+                this.setY(this.getY() - 15);
+                this.setAnimationFrame(1, 2);
+            } */
+
+            else if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 15);
+                this.setAnimationFrame(0, 1);
+
+            } 
+
+         /*   else if (this.orientation.equals(Orientation.EAST)) {
+                this.setX(this.getX() - 15);
+                this.setAnimationFrame(1, 2);
+            } */
+        }
+        
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+        if (this.manager != null) 
+            this.manager.checkCollision();
+        if(this.projectile!=null) {
+        if (!(this.projectile.alive)){
+        	System.out.println("jjj");
+        }
+        }
+    }
+
+
+	 public void render(Graphics2D g) {
+	        super.render(g);
+
+	    }
+
+/*	 private class MomieCollisionManager extends AdvanceCollisionGroup {
+
+	        public MomieCollisionManager() {
+	            this.pixelPerfectCollision = false;
+	        }
+
+	        @Override
+	    	public void collided(Sprite arg0, Sprite arg1) {
+	    		// TODO Auto-generated method stub
+	        	this.revertPosition1();
+	    	}
+	*/
+
+
+
+
+
+	 @Override
+	public void fight(Board board, Link link) {
+		// TODO Auto-generated method stub
+
+		int indice=(int) (1 + (Math.random() * (4 - 1)));
+		Orientation [] dir= {Orientation.SOUTH, Orientation.NORTH, Orientation.WEST, Orientation.EAST};
+		Orientation or=dir[indice];
+		this.projectile= new Projectile_Momie(this.game, or, this.getX(),this.getY());
+		this.projectile.setBoard(board);
+		link.ennemies.add(projectile);
+		projectile.shoot(or);
+
+	}
+
+
+
+
+
+}
+
+package zelda.enemies;
+
+import java.awt.image.BufferedImage;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Timer;
+
+import zelda.Link;
+import zelda.Orientation;
+import zelda.enemies.Ennemies.EnnemiesCollisionManager;
+import zelda.enemies.Ennemies.EnnemiesEnnemyCollisionManager;
+import zelda.scenary.Board;
+
+public class Octo extends Ennemies{
+
+	protected Projoct projectile;
+	
+	public Projoct getProj() {
+		return this.projectile;
+	}
+
+	
+	public Octo(Game game, double x, double y) {
+        this.setGame(game);
+        this.getAnimationTimer().setDelay(Ennemies.ANIMATION_DELAY);
+        this.figth = new Timer(Ennemies.FIGHT_TIMER);
+        this.figth.setActive(false);
+        this.life=2;
+        this.orientation=orientation.SOUTH;
+        this.ennemiesEnnemy= new EnnemiesEnnemyCollisionManager();
+        this.manager = new EnnemiesCollisionManager();
+        this.initResources(x,y);
+    }
+	
+	
+	private void initResources(double x, double y) {
+        BufferedImage[] sprites = new BufferedImage[8];
+        sprites[0] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octgauchecourt.png").getScaledInstance(35, 25, 15));;
+        sprites[1] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octgauchelong.png").getScaledInstance(35, 25, 15));;
+        sprites[2] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octdroitecourt.png").getScaledInstance(35, 25, 15));;
+        sprites[3] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octdroitelong.png").getScaledInstance(35, 25, 15));;
+        sprites[4] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octbascourt.png").getScaledInstance(35, 25, 15));;
+        sprites[5] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octbaslong.png").getScaledInstance(35, 25, 15));;
+        sprites[6] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octhautcourt.png").getScaledInstance(35, 25, 15));;
+        sprites[7] = Ennemies.toBufferedImage(getGame().getImage("res/sprites/Ennemies/octhautlong.png").getScaledInstance(35, 25, 15));;
+        this.setImages(sprites);
+        this.setLocation(x, y);
+        this.setAnimationFrame(4, 4);
+    }
+	
+	public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        if (this.figth.action(elapsedTime)) {
+            this.figth.setActive(false);
+            if (this.orientation.equals(Orientation.WEST)) {
+                this.setX(this.getX() + 22);
+                this.setAnimationFrame(0, 1);
+             
+            } else if (this.orientation.equals(Orientation.NORTH)) {
+                this.setY(this.getY() + 22);
+                this.setAnimationFrame(0, 0);
+            }
+        }
+        if (this.SortTableau()) {
+        	this.setX(this.getOldX());
+        	this.setY(this.getOldY());
+        }
+        
+        if (this.manager != null) 
+            this.manager.checkCollision();
+    }
+	
+	@Override
+	public void fight(Board board, Link link) {
+		this.projectile= new Projoct (this.game, this.orientation, this.getX(),this.getY());
+		projectile.setBoard(board);
+		link.ennemies.add(projectile);
+		projectile.shoot(this.orientation);
+		
+		
+	}
+
+}
+
+package zelda.scenary;
+
+import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.util.List;
+
+import zelda.Zelda;
+import zelda.enemies.Crabe;
+import zelda.enemies.Ennemies;
+import zelda.enemies.Flamme;
+import zelda.enemies.Garde;
+import zelda.enemies.Goblin;
+import zelda.enemies.Mage;
+import zelda.enemies.Momie;
+import zelda.enemies.Octo;
+import zelda.objects.Bombe;
+import zelda.objects.Coeur;
+import zelda.objects.Emeraude;
+import zelda.objects.Objects;
+
+import com.golden.gamedev.object.PlayField;
+import com.golden.gamedev.object.Sprite;
+
+public class Quest extends PlayField {
+    
+    private Zelda game;
+    
+    private Board[][] boards;
+    
+    private List<Ennemies> [][] ennemies;
+    
+    private List<Objects> [][] objets;
+    
+    private QuestMenu menu;
+    
+    private Path[] chemins;
+    
+    private int x,y;
+    
+    public Quest(Zelda game) {
+        super();
+        this.game = game;
+        this.boards = new Board[3][3];
+        this.initRessources();
+        ennemies = new List[3][3];
+        objets=new List[3][3];
+        
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                ennemies[i][j] = new ArrayList<Ennemies>();
+                objets[i][j]= new ArrayList<Objects>();
+            }
+        }
+        ennemies[0][1].add(new Crabe(this.game,256 , 250));
+        ennemies[0][1].add(new Crabe(this.game,256 ,300));
+        ennemies[0][1].add(new Crabe(this.game,256 , 450));
+        ennemies[0][2].add(new Crabe(this.game,256 , 300));
+        ennemies[0][2].add(new Crabe(this.game,256 , 450));
+        ennemies[0][2].add(new Octo(this.game,120 , 320));
+        ennemies[0][2].add(new Octo(this.game,250 , 400));
+        ennemies[1][0].add(new Garde(this.game,400 , 400));
+        ennemies[1][0].add(new Garde(this.game,100 , 400));
+        ennemies[1][0].add(new Momie(this.game,256 , 380));
+        ennemies[1][1].add(new Goblin(this.game,256 , 380));
+        ennemies[1][1].add(new Garde(this.game,400 , 400));
+        ennemies[1][1].add(new Garde(this.game,100 , 400));
+        ennemies[1][1].add(new Goblin(this.game,256 , 250));
+        ennemies[1][2].add(new Mage(this.game,256 , 380));
+        ennemies[1][2].add(new Momie(this.game,400 , 400));
+        ennemies[1][2].add(new Crabe(this.game,256 , 250));
+        ennemies[1][2].add(new Mage(this.game,300 , 380));
+        ennemies[2][0].add(new Octo(this.game,256 , 380));
+        ennemies[2][0].add(new Momie(this.game,400 , 400));
+        ennemies[2][0].add(new Garde(this.game,256 , 250));
+        ennemies[2][0].add(new Flamme(this.game,300 , 380));
+        ennemies[2][1].add(new Mage(this.game,256 , 380));
+        ennemies[2][1].add(new Goblin(this.game,400 , 400));
+        ennemies[2][1].add(new Garde(this.game,256 , 250));
+        ennemies[2][1].add(new Goblin(this.game,300 , 380));
+        ennemies[2][2].add(new Mage(this.game,256 , 380));
+        ennemies[2][2].add(new Mage(this.game,400 , 400));
+        ennemies[2][2].add(new Garde(this.game,256 , 250));
+        ennemies[2][2].add(new Garde(this.game,300 , 380));
+        ennemies[2][2].add(new Flamme(this.game,300 , 450));
+        ennemies[2][2].add(new Flamme(this.game,450 , 400));
+        ennemies[2][2].add(new Flamme(this.game,300 , 250));
+        objets[0][1].add(new Emeraude(this.game,256 , 250));
+        objets[0][1].add(new Emeraude(this.game,256 ,300));
+        objets[0][1].add(new Emeraude(this.game,256 , 450));
+        objets[0][2].add(new Emeraude(this.game,256 , 300));
+        objets[0][2].add(new Emeraude(this.game,256 , 450));
+        objets[0][2].add(new Bombe(this.game,120 , 320));
+        objets[0][2].add(new Bombe(this.game,250 , 400));
+        objets[1][0].add(new Bombe(this.game,400 , 400));
+        objets[1][0].add(new Bombe(this.game,100 , 400));
+        objets[1][0].add(new Coeur(this.game,256 , 380));
+        objets[1][1].add(new Coeur(this.game,256 , 380));
+        objets[1][1].add(new Bombe(this.game,400 , 400));
+        objets[1][1].add(new Bombe(this.game,100 , 400));
+        objets[1][1].add(new Coeur(this.game,256 , 250));
+        objets[1][2].add(new Emeraude(this.game,256 , 380));
+        objets[1][2].add(new Coeur(this.game,400 , 400));
+        objets[1][2].add(new Emeraude(this.game,256 , 250));
+        objets[1][2].add(new Emeraude(this.game,300 , 380));
+        objets[2][0].add(new Bombe(this.game,256 , 380));
+        objets[2][0].add(new Coeur(this.game,400 , 400));
+        objets[2][0].add(new Bombe(this.game,256 , 250));
+        objets[2][0].add(new Emeraude(this.game,300 , 380));
+        objets[2][1].add(new Emeraude(this.game,256 , 380));
+        objets[2][1].add(new Coeur(this.game,400 , 400));
+        objets[2][1].add(new Bombe(this.game,256 , 250));
+        objets[2][1].add(new Coeur(this.game,300 , 380));
+        objets[2][2].add(new Emeraude(this.game,256 , 380));
+        objets[2][2].add(new Emeraude(this.game,400 , 400));
+        objets[2][2].add(new Bombe(this.game,256 , 250));
+        objets[2][2].add(new Bombe(this.game,300 , 380));
+        objets[2][2].add(new Emeraude(this.game,300 , 450));
+        objets[2][2].add(new Emeraude(this.game,450 , 400));
+        objets[2][2].add(new Emeraude(this.game,300 , 250));
+        for (int j=0; j<3; j++) {
+       	 for(int i=0; i<3; i++) {
+       		 for (int k=0; k<ennemies[i][j].size(); k++) {
+       			ennemies[i][j].get(k).setBoard(boards[i][j]);
+       			objets[i][j].get(k).setBoard(boards[i][j]);
+       			this.game.getLink().ennemies.add(ennemies[i][j].get(k));
+       			 
+       		 }
+       	 }
+       	 
+       	 }
+        }
+    
+
+    private void initRessources()  {
+      this.menu = new QuestMenu(this.game);
+        
+       
+     this.chemins= new Path[]{Paths.get("Haut_Gauche.txt"), Paths.get("Haut_Milieu.txt"), Paths.get("Haut_Droit.txt"), Paths.get("Milieu_Gauche.txt"), Paths.get("Milieu_Milieu.txt"), Paths.get("Milieu_Droit.txt"), Paths.get("Bas_Gauche.txt"), Paths.get("Bas_Milieu.txt"), Paths.get("Bas_Droit.txt")};
+        
+     for (int j=0; j<3; j++) {
+    	 for(int i=0; i<3; i++) {
+    	Path p1=chemins[j*3+i];
+    	Board board= new Board(this.game,i,j);
+
+		BufferedReader in = null;
+
+	 try {
+		 System.out.println(i+","+j+p1.toAbsolutePath());
+	 // Ouverture d'un flux en lecture depuis
+	 // le fichier désigné par le chemin f1
+	 in = Files.newBufferedReader(p1);
+	 
+
+	
+	 int c;
+	 // si le caractère lu est égale à -1 alors on a atteint
+	 // la fin du flux (i.e. la fin du fichier)
+	 // la méthode read retourne un entier borné entre 0 et 255(i.e. un octet)
+	 while ((c = in.read()) != -1) {
+		 System.out.print((char)c);
+		 switch(c) {
+		 	case 'x': board.add(new Rock(this.game, Rock.Kind.GREEN_PLAIN)); //rocher
+		 	break;
+		 	case '.': board.add(new Floor(this.game, Floor.Color.SAND)); //sol
+		 	break;
+		 	case '/': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_EAST_CORNER));//rocher sud est
+		 	break;
+		 	case '\\': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_WEST_CORNER));//rocher sud ouest
+		 	break;
+		 	case 'M': board.add(new Rock(this.game, Rock.Kind.GREEN_INDENTED));//rocher nord
+		 	break;
+		 }
+	 
+	 }
+	 }
+	 catch (Exception e) { // ancienne API : FileNotFoundException
+	 System.err.println("le fichier "+p1+" n'existe pas");
+	 e.printStackTrace();
+	 }
+	 // Les autres Exceptions de type IOException ne sont pas
+	 // gérées ici : la méthode main est déclarée throws IOException
+	 finally {
+	 if (in != null) {
+	 try {
+		in.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 }
+	
+	 }
+        
+        this.add(board);
+        }}
+     this.x=0;
+     this.y=0;
+        
+    }
+    
+    
+    public Board getCurrentBoard() {
+        return this.boards[x][y];
+    }
+    
+    public int getX() {
+    	return this.x;
+    }
+    
+    public int getY() {
+    	return this.y;
+    }
+    
+    public void changeBoard(int x, int y) {
+    	this.x=x;
+    	this.y=y;
+    }
+    
+    public void add(Board board) {
+        //this.addGroup(board.getBackground());
+        //this.addGroup(board.getForground());
+        this.boards[board.getX()][board.getY()] = board;
+    }
+        
+    public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        for (int j=0; j<3; j++) {
+          	 for(int i=0; i<3; i++) {
+          		 for (int k=0; k<this.ennemies[i][j].size(); k++) {
+          			if( this.ennemies[i][j].get(k).meurt()) {
+          				this.game.getLink().ennemies.remove(this.ennemies[i][j].get(k));
+          				this.game.getLink().objet.add(objets[i][j].get(k));
+          				objets[i][j].get(k).setVisibilite(true);
+          				this.ennemies[i][j].remove(k);
+          			}
+          		 
+          		 }
+          		for (int k=0; k<this.objets[i][j].size(); k++) {
+          			this.objets[i][j].get(k).update(elapsedTime);;
+          			if( this.objets[i][j].get(k).estRecup()) {
+          				this.game.getLink().objet.remove(this.objets[i][j].get(k));
+          				this.objets[i][j].remove(k);
+          			}
+          		}
+          	 }
+          	 
+          	 }
+        this.boards[x][y].update(elapsedTime);
+        this.menu.update(elapsedTime);
+    }
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+        this.boards[x][y].render(g); 
+        for (int i=0; i<this.objets[x][y].size(); i++) {
+        	if(this.objets[x][y].get(i).getVisibilite())
+        	this.objets[x][y].get(i).render(g);
+        }
+        for (int i=0; i<this.ennemies[x][y].size(); i++) {
+        	this.ennemies[x][y].get(i).render(g);
+        }
+        this.menu.render(g);
+    }
+}
