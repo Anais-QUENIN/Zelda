@@ -1,0 +1,190 @@
+package zelda.scenary;
+
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
+
+import zelda.Zelda;
+
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+public class QuestMenu {
+    
+    private SpriteGroup sprites;
+    private Sprite[] coeurRouge;
+    private Sprite[] coeurBleu;
+    private Sprite[] triforces;
+    private Sprite[] emeraudes;
+    private Sprite[] bombes;
+    
+    
+    private Zelda game;
+    
+    public QuestMenu(Zelda game) {
+        this.game = game;
+        this.sprites = new SpriteGroup("");
+        this.sprites.add(new Sprite(this.game.getImage("res/sprites/B_CASE.GIF"), 330, 30));
+        this.sprites.add(new Sprite(this.game.getImage("res/sprites/A_CASE.GIF"), 400, 30));
+        this.sprites.add(new Sprite(this.game.getImage("res/sprites/LIFE.GIF"), 500, 30));
+        this.sprites.add(new Sprite(this.game.getImage("res/sprites/BOMB.GIF"), 230, 79));
+        this.sprites.add(new Sprite(this.game.getImage("res/sprites/X.GIF"), 250, 80));
+        this.sprites.add(new Sprite(this.game.getImage("res/sprites/PIECE.GIF"), 230, 30));
+        this.sprites.add(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OYTF.GIF").getScaledInstance(25,35,1)), 30, 55));
+        this.sprites.add(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/X.GIF").getScaledInstance(20,20,1)), 50, 70));
+        this.sprites.add(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OWBN.GIF").getScaledInstance(25,35,1)), 410, 55));
+        this.sprites.add(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OS.GIF").getScaledInstance(20,30,1)), 345, 60));
+        
+        this.coeurRouge= new Sprite[] {(new Sprite(this.game.getImage("res/sprites/X.GIF"), 250, 30)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 480, 55)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 520, 55)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 560, 55)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 600, 55)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 480, 90)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 520, 90)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 560, 90)),
+        	(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/ORH.GIF").getScaledInstance(25,35,1)), 600, 90))};
+        this.coeurBleu= new Sprite[] {(new Sprite(this.game.getImage("res/sprites/X.GIF"), 250, 30)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 480, 55)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 520, 55)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 560, 55)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 600, 55)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 480, 90)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 520, 90)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 560, 90)),
+            (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/Objects/OBH.GIF").getScaledInstance(25,35,1)), 600, 90))};
+        
+        this.triforces = new Sprite[] {  (new Sprite(this.game.getImage("res/sprites/0.GIF"), 70, 70)),
+        		(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/1.GIF").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/2.png").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/3.GIF").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/4.png").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/5.png").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/6.png").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/7.png").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/8.GIF").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/9.GIF").getScaledInstance(15,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/10.png").getScaledInstance(30,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/11.png").getScaledInstance(30,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/12.png").getScaledInstance(30,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/13.png").getScaledInstance(30,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/14.png").getScaledInstance(30,20,1)), 70, 70)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/15.png").getScaledInstance(30,20,1)), 70, 70)),
+        
+        
+        
+        }; 
+        		
+        this.emeraudes = new Sprite[] {  (new Sprite(this.game.getImage("res/sprites/0.GIF"), 270, 30)),
+        		(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/1.GIF").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/2.png").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/3.GIF").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/4.png").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/5.png").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/6.png").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/7.png").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/8.GIF").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/9.GIF").getScaledInstance(15,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/10.png").getScaledInstance(30,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/11.png").getScaledInstance(30,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/12.png").getScaledInstance(30,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/13.png").getScaledInstance(30,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/14.png").getScaledInstance(30,20,1)), 270, 30)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/15.png").getScaledInstance(30,20,1)), 270, 30))
+        
+        
+        }; 
+       
+        this.bombes = new Sprite[] { // (new Sprite(this.game.getImage("res/sprites/0.GIF"), 270, 80)),
+        		(new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/1.GIF").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/2.png").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/3.GIF").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/4.png").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/5.png").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/6.png").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/7.png").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/8.GIF").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/9.GIF").getScaledInstance(15,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/10.png").getScaledInstance(30,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/11.png").getScaledInstance(30,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/12.png").getScaledInstance(30,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/13.png").getScaledInstance(30,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/14.png").getScaledInstance(30,20,1)), 270, 80)),
+                (new Sprite(QuestMenu.toBufferedImage(this.game.getImage("res/sprites/15.png").getScaledInstance(30,20,1)), 270, 80))
+        
+        }; 
+        	 
+    }
+    
+    
+    
+    
+    
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+
+    public void move(long elapsedTime, boolean flag) {
+        Sprite[] s = this.sprites.getSprites();
+        for (int i = 0; i < this.sprites.getSize(); i++) {
+            if (flag) 
+                s[i].moveTo(elapsedTime, s[i].getX(), s[i].getY() + 300, 1);
+            else 
+                s[i].moveTo(elapsedTime, s[i].getX(), s[i].getY() - 300, 1);
+        }
+        
+    }
+    
+    public void update(long elapsedTime) {
+    	int life = (int) Math.ceil(this.game.getLink().getLife()/2);
+    	for (int i=0; i<coeurRouge.length; i++) {
+    		if (i<=life) {
+    			this.sprites.add(this.coeurRouge[i]);
+    		}
+    		else {
+    			this.sprites.add(this.coeurBleu[i]);
+    		}
+    		
+    	}
+    		
+    	int triforce = this.game.getLink().getTriforce();
+    	this.sprites.add(this.triforces[triforce]);
+    	
+    	
+    	int emeraude = this.game.getLink().getEmeraude();
+       this.sprites.add(this.emeraudes[emeraude]);
+    		
+    	int bombe = this.game.getLink().getBombe();
+        			this.sprites.add(this.bombes[bombe]);
+        	
+    		
+    	
+        this.sprites.update(elapsedTime);
+    }
+    
+    public void render(Graphics2D g) {
+        this.sprites.render(g);
+    }
+    
+     
+    
+}
+
