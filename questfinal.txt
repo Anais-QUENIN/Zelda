@@ -1,0 +1,311 @@
+package zelda.scenary;
+
+import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.util.List;
+
+import zelda.Zelda;
+import zelda.enemies.Crabe;
+import zelda.enemies.Ennemies;
+import zelda.enemies.Flamme;
+import zelda.enemies.Garde;
+import zelda.enemies.Goblin;
+import zelda.enemies.Mage;
+import zelda.enemies.Momie;
+import zelda.enemies.Octo;
+import zelda.objects.Bombe;
+import zelda.objects.Coeur;
+import zelda.objects.Emeraude;
+import zelda.objects.Objects;
+import zelda.objects.Triforce;
+
+import com.golden.gamedev.object.PlayField;
+import com.golden.gamedev.object.Sprite;
+
+public class Quest extends PlayField {
+    
+    private Zelda game;
+    
+    private Board[][] boards;
+    
+    private List<Ennemies> [][] ennemies;
+    
+    private List<Objects> [][] objets;
+    
+    private QuestMenu menu;
+    
+    private Path[] chemins;
+    
+    private int x,y;
+    
+    public Quest(Zelda game) {
+        super();
+        this.game = game;
+        this.boards = new Board[3][3];
+        this.initRessources();
+        ennemies = new List[3][3];
+        objets=new List[3][3];
+        
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                ennemies[i][j] = new ArrayList<Ennemies>();
+                objets[i][j]= new ArrayList<Objects>();
+            }
+        }
+        ennemies[0][1].add(new Crabe(this.game,256 , 250));
+        ennemies[0][1].add(new Crabe(this.game,256 ,300));
+        ennemies[0][1].add(new Crabe(this.game,256 , 450));
+        ennemies[0][2].add(new Crabe(this.game,256 , 300));
+        ennemies[0][2].add(new Crabe(this.game,256 , 450));
+        ennemies[0][2].add(new Octo(this.game,120 , 320));
+        ennemies[0][2].add(new Octo(this.game,250 , 400));
+        ennemies[1][0].add(new Garde(this.game,400 , 400));
+        ennemies[1][0].add(new Garde(this.game,100 , 400));
+        ennemies[1][0].add(new Momie(this.game,256 , 380));
+        ennemies[1][1].add(new Goblin(this.game,256 , 380));
+        ennemies[1][1].add(new Garde(this.game,400 , 400));
+        ennemies[1][1].add(new Garde(this.game,100 , 400));
+        ennemies[1][1].add(new Goblin(this.game,256 , 250));
+        ennemies[1][2].add(new Mage(this.game,256 , 380));
+        ennemies[1][2].add(new Momie(this.game,400 , 400));
+        ennemies[1][2].add(new Crabe(this.game,256 , 250));
+        ennemies[1][2].add(new Mage(this.game,300 , 380));
+        ennemies[2][0].add(new Octo(this.game,256 , 380));
+        ennemies[2][0].add(new Momie(this.game,400 , 400));
+        ennemies[2][0].add(new Garde(this.game,256 , 250));
+        ennemies[2][0].add(new Flamme(this.game,300 , 380));
+        ennemies[2][1].add(new Mage(this.game,256 , 380));
+        ennemies[2][1].add(new Goblin(this.game,400 , 400));
+        ennemies[2][1].add(new Garde(this.game,256 , 250));
+        ennemies[2][1].add(new Goblin(this.game,300 , 380));
+        ennemies[2][2].add(new Mage(this.game,256 , 380));
+        ennemies[2][2].add(new Mage(this.game,400 , 400));
+        ennemies[2][2].add(new Garde(this.game,256 , 250));
+        ennemies[2][2].add(new Garde(this.game,300 , 380));
+        ennemies[2][2].add(new Flamme(this.game,300 , 450));
+        ennemies[2][2].add(new Flamme(this.game,450 , 400));
+        ennemies[2][2].add(new Flamme(this.game,300 , 250));
+        objets[0][1].add(new Emeraude(this.game,256 , 250));
+        objets[0][1].add(new Emeraude(this.game,256 ,300));
+        objets[0][1].add(new Emeraude(this.game,256 , 450));
+        objets[0][2].add(new Emeraude(this.game,256 , 300));
+        objets[0][2].add(new Emeraude(this.game,256 , 450));
+        objets[0][2].add(new Bombe(this.game,120 , 320));
+        objets[0][2].add(new Bombe(this.game,250 , 400));
+        objets[1][0].add(new Bombe(this.game,400 , 400));
+        objets[1][0].add(new Bombe(this.game,100 , 400));
+        objets[1][0].add(new Coeur(this.game,256 , 380));
+        objets[1][1].add(new Coeur(this.game,256 , 380));
+        objets[1][1].add(new Bombe(this.game,400 , 400));
+        objets[1][1].add(new Bombe(this.game,100 , 400));
+        objets[1][1].add(new Coeur(this.game,256 , 250));
+        objets[1][2].add(new Emeraude(this.game,256 , 380));
+        objets[1][2].add(new Coeur(this.game,400 , 400));
+        objets[1][2].add(new Emeraude(this.game,256 , 250));
+        objets[1][2].add(new Emeraude(this.game,300 , 380));
+        objets[2][0].add(new Bombe(this.game,256 , 380));
+        objets[2][0].add(new Coeur(this.game,400 , 400));
+        objets[2][0].add(new Bombe(this.game,256 , 250));
+        objets[2][0].add(new Emeraude(this.game,300 , 380));
+        objets[2][1].add(new Emeraude(this.game,256 , 380));
+        objets[2][1].add(new Coeur(this.game,400 , 400));
+        objets[2][1].add(new Bombe(this.game,256 , 250));
+        objets[2][1].add(new Coeur(this.game,300 , 380));
+        objets[2][2].add(new Emeraude(this.game,256 , 380));
+        objets[2][2].add(new Emeraude(this.game,400 , 400));
+        objets[2][2].add(new Bombe(this.game,256 , 250));
+        objets[2][2].add(new Bombe(this.game,300 , 380));
+        objets[2][2].add(new Emeraude(this.game,300 , 450));
+        objets[2][2].add(new Emeraude(this.game,450 , 400));
+        objets[2][2].add(new Emeraude(this.game,300 , 250));
+        
+        objets[0][1].add(new Triforce(this.game,256, 380));
+        objets[0][2].add(new Triforce(this.game,256, 380));
+        objets[1][0].add(new Triforce(this.game,256, 380));
+        objets[1][1].add(new Triforce(this.game,256, 380));
+        objets[1][2].add(new Triforce(this.game,256, 380));
+        objets[2][0].add(new Triforce(this.game,256, 380));
+        objets[2][1].add(new Triforce(this.game,256, 380));
+        objets[2][2].add(new Triforce(this.game,256, 380));
+        
+        
+        for (int j=0; j<3; j++) {
+       	 for(int i=0; i<3; i++) {
+       		 for (int k=0; k<ennemies[i][j].size(); k++) {
+       			ennemies[i][j].get(k).setBoard(boards[i][j]);
+       			this.game.getLink().ennemies.add(ennemies[i][j].get(k));
+       			 
+       		 }
+       		 for (int k=0; k<objets[i][j].size(); k++) {
+       			objets[i][j].get(k).setBoard(boards[i][j]);
+       		 }
+       	 }
+       	 
+       	 }
+        }
+    
+
+    private void initRessources()  {
+      this.menu = new QuestMenu(this.game);
+        
+       
+     this.chemins= new Path[]{Paths.get("Haut_Gauche.txt"), Paths.get("Haut_Milieu.txt"), Paths.get("Haut_Droit.txt"), Paths.get("Milieu_Gauche.txt"), Paths.get("Milieu_Milieu.txt"), Paths.get("Milieu_Droit.txt"), Paths.get("Bas_Gauche.txt"), Paths.get("Bas_Milieu.txt"), Paths.get("Bas_Droit.txt")};
+        
+     for (int j=0; j<3; j++) {
+    	 for(int i=0; i<3; i++) {
+    	Path p1=chemins[j*3+i];
+    	Board board= new Board(this.game,i,j);
+
+		BufferedReader in = null;
+
+	 try {
+		 System.out.println(i+","+j+p1.toAbsolutePath());
+	 // Ouverture d'un flux en lecture depuis
+	 // le fichier désigné par le chemin f1
+	 in = Files.newBufferedReader(p1);
+	 
+
+	
+	 int c;
+	 // si le caractère lu est égale à -1 alors on a atteint
+	 // la fin du flux (i.e. la fin du fichier)
+	 // la méthode read retourne un entier borné entre 0 et 255(i.e. un octet)
+	 while ((c = in.read()) != -1) {
+		 System.out.print((char)c);
+		 switch(c) {
+		 	case 'x': board.add(new Rock(this.game, Rock.Kind.GREEN_PLAIN)); //rocher
+		 	break;
+		 	case '.': board.add(new Floor(this.game, Floor.Color.SAND)); //sol
+		 	break;
+		 	case '/': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_EAST_CORNER));//rocher sud est
+		 	break;
+		 	case '\\': board.add(new Rock(this.game, Rock.Kind.GREEN_SOUTH_WEST_CORNER));//rocher sud ouest
+		 	break;
+		 	case 'M': board.add(new Rock(this.game, Rock.Kind.GREEN_INDENTED));//rocher nord
+		 	break;
+		 }
+	 
+	 }
+	 }
+	 catch (Exception e) { // ancienne API : FileNotFoundException
+	 System.err.println("le fichier "+p1+" n'existe pas");
+	 e.printStackTrace();
+	 }
+	 // Les autres Exceptions de type IOException ne sont pas
+	 // gérées ici : la méthode main est déclarée throws IOException
+	 finally {
+	 if (in != null) {
+	 try {
+		in.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 }
+	
+	 }
+        
+        this.add(board);
+        }}
+     this.x=0;
+     this.y=0;
+        
+    }
+    
+    
+    public Board getCurrentBoard() {
+        return this.boards[x][y];
+    }
+    
+    public int getX() {
+    	return this.x;
+    }
+    
+    public int getY() {
+    	return this.y;
+    }
+    
+    public void changeBoard(int x, int y) {
+    	this.x=x;
+    	this.y=y;
+    }
+    
+    public void add(Board board) {
+        //this.addGroup(board.getBackground());
+        //this.addGroup(board.getForground());
+        this.boards[board.getX()][board.getY()] = board;
+    }
+        
+    public void update(long elapsedTime) {
+        super.update(elapsedTime);
+        
+        if(this.getCurrentBoard()!=boards[0][0]) {
+        	int indice=objets[x][y].size()-1;
+	        	if (this.vide()) {
+	        		this.game.getLink().objet.add(objets[x][y].get(indice));
+	        		objets[x][y].get(indice).setVisibilite(true);
+	        	}
+	  			
+	  		 }
+        for (int j=0; j<3; j++) {
+          	 for(int i=0; i<3; i++) {
+          		 for (int k=0; k<this.ennemies[i][j].size(); k++) {
+          			this.ennemies[i][j].get(k).update(elapsedTime);
+          			if( this.ennemies[i][j].get(k).meurt()) {
+          				this.game.getLink().ennemies.remove(this.ennemies[i][j].get(k));
+          				this.game.getLink().objet.add(objets[i][j].get(k));
+          				objets[i][j].get(k).setVisibilite(true);
+          				objets[i][j].get(k).setX(this.ennemies[i][j].get(k).getX());
+          				objets[i][j].get(k).setY(this.ennemies[i][j].get(k).getY());
+          				this.ennemies[i][j].remove(k);
+          			}
+          			
+          		 
+          		 }
+          		for (int k=0; k<this.objets[i][j].size(); k++) {
+          			this.objets[i][j].get(k).update(elapsedTime);
+          			if( this.objets[i][j].get(k).estRecup()) {
+          				this.game.getLink().objet.remove(this.objets[i][j].get(k));
+          				this.objets[i][j].remove(k);
+          			}
+          		}
+          	 }
+          	 
+          	 }
+        	
+        this.boards[x][y].update(elapsedTime);
+        this.menu.update(elapsedTime);
+        
+    }
+    
+    public boolean vide() {
+    	for (int k=0; k<this.ennemies[x][y].size(); k++) {
+  			if(this.ennemies[x][y].get(k)!=null) {
+  				return false;
+  			}
+  			
+    	}
+    	return true;
+    	
+    }
+    
+    public void render(Graphics2D g) {
+        super.render(g);
+        this.boards[x][y].render(g); 
+        for (int i=0; i<this.objets[x][y].size(); i++) {
+        	if(this.objets[x][y].get(i).getVisibilite())
+        	this.objets[x][y].get(i).render(g);
+        }
+        for (int i=0; i<this.ennemies[x][y].size(); i++) {
+        	this.ennemies[x][y].get(i).render(g);
+        }
+        this.menu.render(g);
+    }
+}
