@@ -1,0 +1,28 @@
+public void ai(Link link) {
+		
+		double dx = link.getX() - this.getX();
+		double dy = link.getY() - this.getY();
+		
+		if (timeSinceLastShot >= SHOT_INTERVAL) {
+	        // shoot at Link
+	        this.fight(board, link, orientation);
+	        timeSinceLastShot = 0;
+	    } else {
+	        timeSinceLastShot++;
+	    }
+		
+    	if(Math.abs(dx)>Math.abs(dy)) {
+        if (dx < 0) {
+            this.gauche();
+        } else if (dx > 0) {
+            this.droite();
+        }
+    	}else {
+
+        if (dy < 0) {
+            this.haut();
+        } else if (dy > 0) {
+            this.bas();
+        }
+    }
+}
