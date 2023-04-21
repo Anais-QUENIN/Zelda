@@ -1,0 +1,215 @@
+package zelda;
+
+import com.golden.gamedev.object.CollisionManager;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import zelda.enemies.Crabe;
+import zelda.enemies.Ennemies;
+import zelda.scenary.Quest;
+import zelda.scenary.Rock;
+
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.GameLoader;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.collision.AdvanceCollisionGroup;
+
+public class Zelda extends Game {
+    
+    private Link link;
+   
+    private Quest quest;
+    
+    private JFrame fenetreGameOver = new JFrame("");
+    
+    
+//    private Ennemies ennemi;
+    
+    private boolean menu;
+    
+    
+    public Zelda() {
+        
+    }
+    private Rock rock;
+    
+    
+    public Link getLink() {return this.link;}
+    
+    public void initResources() {
+    	this.link = new Link(this);
+        this.quest = new Quest(this);
+//        this.ennemi = new Crabe(this, 230,60);
+        SpriteGroup enemyGroup = new SpriteGroup("enemyGroup");
+        //this.link = new Link(this);
+        this.link.ennemies=enemyGroup;
+        this.link.setBoard(this.quest.getCurrentBoard());  
+//        this.ennemi.setBoard(this.quest.getCurrentBoard());
+    }
+    
+    
+    
+    public Boolean SortTableau() {
+    	if (this.link.getX()<0 || this.link.getX()>672 || this.link.getY()<126 || this.link.getY()>588) {
+    		
+    	return true;
+    	}else return false;
+    }
+    
+  
+        
+    public void update(long elapsedTime) {
+        if (this.keyPressed(KeyEvent.VK_ALT)) {
+            this.link.fight();
+        } else if (this.keyDown(KeyEvent.VK_LEFT)) {
+            this.link.walk(Orientation.WEST);
+        } else if (this.keyDown(KeyEvent.VK_RIGHT)) {
+            this.link.walk(Orientation.EAST);
+        } else if (this.keyDown(KeyEvent.VK_UP)) {
+            this.link.walk(Orientation.NORTH);
+        } else if (this.keyDown(KeyEvent.VK_DOWN)) {
+            this.link.walk(Orientation.SOUTH);
+        } else if (keyPressed(KeyEvent.VK_ESCAPE)) {
+            finish();
+        } else {
+            this.link.setSpeed(0, 0);
+        }
+        this.quest.update(elapsedTime);
+        this.link.update(elapsedTime);
+//        this.ennemi.update(elapsedTime);
+        if(this.link.getTriforce() == 8) {
+       	 afficherFenetreGagne();
+        }
+        if(this.link.meurt()) {
+        	afficherFenetrePerdu();
+        };
+        if(this.SortTableau()) {
+        	
+        	System.out.println(quest.getX() + "," + quest.getY());
+        	System.out.println(link.getX() + "," + link.getY() + ": " + SortTableau());
+        	switch(this.link.getOrientation()) {
+        	case WEST:
+        		this.link.setLocation(671, this.link.getY());
+        		this.quest.changeBoard(this.quest.getX()-1, this.quest.getY());
+        		break;
+        	case EAST:
+        		this.link.setLocation(1, this.link.getY());
+        		this.quest.changeBoard(this.quest.getX()+1, this.quest.getY());
+        		break;
+        	case NORTH:
+        		this.link.setLocation(this.link.getX(),587);
+        		this.quest.changeBoard(this.quest.getX(), this.quest.getY()-1);
+        		break;
+        	case SOUTH:
+        		this.link.setLocation(this.link.getX(),137);
+        		this.quest.changeBoard(this.quest.getX(), this.quest.getY()+1);
+        		break;
+        	}
+        	this.link.setBoard(this.quest.getCurrentBoard());
+        }
+        
+     
+   
+     
+    }
+
+    public void render(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        this.quest.render(g);
+        this.link.render(g);
+    
+        
+        
+    }
+    
+  public void afficherFenetrePerdu() {
+
+    fenetreGameOver.setSize(400, 100);
+    fenetreGameOver.setLocationRelativeTo(null); // centrer la fenêtre
+    fenetreGameOver.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    JLabel label = new JLabel("GAME OVER");
+    JPanel panel = new JPanel();
+    panel.add(label);
+
+ /*   JButton button = new JButton("Rejouer");
+    
+    panel.add(button); // Ajouter le bouton au JPanel
+    button.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            relancerPartie();
+           
+            
+        }
+    }); */
+    
+   
+    fenetreGameOver.add(panel);
+
+    fenetreGameOver.setVisible(true);
+}
+    
+    
+    public void afficherFenetreGagne() {
+        JFrame nouvelleFenetre = new JFrame("");
+
+        nouvelleFenetre.setSize(400, 100);
+        nouvelleFenetre.setLocationRelativeTo(null); // centrer la fenêtre
+        nouvelleFenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JLabel label = new JLabel("GAGNE!");
+        JPanel panel = new JPanel();
+        panel.add(label);
+
+      /*  JButton button = new JButton("Rejouer");
+        
+        panel.add(button); // Ajouter le bouton au JPanel
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                relancerPartie();
+                
+            } 
+        }); */
+        
+       
+        fenetreGameOver.add(panel);
+
+        fenetreGameOver.setVisible(true);
+    }  
+    
+    
+    
+/*public void relancerPartie() {
+	GameLoader game = new GameLoader();
+    game.setup(new Zelda(), new Dimension(672,588), false);
+    game.start();
+    fenetreGameOver.dispose();
+	fenetreGameOver.setVisible(false);
+    
+} */
+    
+    
+    
+    
+    public static void main(String[] args) {
+        GameLoader game = new GameLoader();
+        game.setup(new Zelda(), new Dimension(672,588), false);
+        game.start();
+    
+    }
+    
+}
